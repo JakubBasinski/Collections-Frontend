@@ -159,7 +159,7 @@ const CollectionForm = () => {
       >
         <FormControl
           sx={{
-            gap: 2,
+            gap: 4,
             paddingY: '50px',
             borderRadius: '10px',
             color: 'grey',
@@ -174,8 +174,8 @@ const CollectionForm = () => {
               sx={{
                 display: 'flex',
                 flexDirection: 'column',
-                gap: 2,
-                width: '50%',
+                gap: 3,
+                width: '60%',
                 justifyContent: 'start',
               }}
             >
@@ -327,7 +327,8 @@ const CollectionForm = () => {
                 sx={{
                   display: 'flex',
                   alignItems: 'center',
-                  justifyContent: 'space-evenly',
+                  justifyContent: 'start',
+                  gap:3
                 }}
               >
                 <label htmlFor="upload-photo">
@@ -363,7 +364,7 @@ const CollectionForm = () => {
                 {fetchError && <div> Error - failed to load images</div>} */}
                 <Button
                   sx={{
-                    width: '50%',
+                    width: '30%',
                     fontFamily: 'Quicksand',
                     paddingX: '20px',
                     paddingY: '5px',
