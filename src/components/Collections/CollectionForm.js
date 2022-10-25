@@ -19,24 +19,24 @@ import {
 import useMutation from '../Hooks/useMutation';
 
 const initialFieldValues = {
-  name: null,
+  name: '',
   topic: '',
-  description: undefined,
-  integer1name: null,
-  integer2name: null,
-  integer3name: null,
-  string1name: null,
-  string2name: null,
-  string3name: null,
-  data1name: null,
-  data2name: null,
-  data3name: null,
-  text1name: null,
-  text2name: null,
-  text3name: null,
-  checkbox1name: null,
-  checkbox2name: null,
-  checkbox3name: null,
+  description: '',
+  integer1name: '',
+  integer2name: '',
+  integer3name: '',
+  string1name: '',
+  string2name: '',
+  string3name: '',
+  data1name: '',
+  data2name: '',
+  data3name: '',
+  text1name: '',
+  text2name: '',
+  text3name: '',
+  checkbox1name: '',
+  checkbox2name: '',
+  checkbox3name: '',
 };
 
 const showOptionalFields = {
@@ -67,10 +67,6 @@ const CollectionForm = () => {
   const [customizationPreview, setCustomizationPreview] = useState(false);
   const [uploadFile, setFile] = useState(null);
   const [singInMessage, setSignInMessage] = useState(null);
-
-  console.log(values.description);
-  console.log(values.name);
-  console.log(values.topic);
 
   const signInMessageHandler = (message) => {
     setSignInMessage(message);
@@ -112,19 +108,22 @@ const CollectionForm = () => {
 
   const submitCollectionHandler = async (event) => {
     event.preventDefault();
-    const tokenUser = localStorage.getItem('token');
+    const token = localStorage.getItem('token');
+
+    const fd = new FormData();
+    console.log(uploadFile);
+
     if (!validFileTypes.find((type) => type === uploadFile.type)) {
       signInMessageHandler('File must be in JPG/PNG format');
+      console.log(uploadFile);
     }
-    const fd = new FormData();
-
+    
     fd.append('image', uploadFile);
-
     for (const property in values) {
       fd.append(property, values[property]);
     }
 
-    await uploadImage(fd).then(signInMessageHandler('image sent'));
+    await uploadImage(fd, token).then(signInMessageHandler('image sent'));
   };
 
   // Snackbar
@@ -235,7 +234,7 @@ const CollectionForm = () => {
                 onChange={handleInputChange}
               ></TextField>
 
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Box sx={{ display: 'flex', gap: 1 }}>
                 {descriptionPreview ? (
                   <VisibilityOffIcon
                     sx={{
@@ -271,7 +270,7 @@ const CollectionForm = () => {
                     fontFamily: 'Quicksand',
                     color: '#DCD7C9',
                     textTransform: 'none',
-                    width: '50%',
+
                     fontSize: '1em',
                     borderColor: '#1A373C',
                   }}
@@ -282,6 +281,7 @@ const CollectionForm = () => {
                 {customizationPreview ? (
                   <VisibilityOffIcon
                     sx={{
+                      marginLeft: '1rem',
                       background: '#1A373C',
                       borderRadius: '50%',
                       padding: '4px',
@@ -296,9 +296,10 @@ const CollectionForm = () => {
                 ) : (
                   <VisibilityIcon
                     sx={{
+                      marginLeft: '1rem',
                       background: '#1A373C',
                       borderRadius: '50%',
-                      padding: '6px',
+                      padding: '4px',
                       '&:hover': {
                         cursor: 'pointer',
                         color: '#f8e112',
@@ -314,7 +315,7 @@ const CollectionForm = () => {
                     fontFamily: 'Quicksand',
                     color: '#DCD7C9',
                     textTransform: 'none',
-                    width: '50%',
+
                     fontSize: '1em',
                     borderColor: '#1A373C',
                   }}
@@ -328,7 +329,7 @@ const CollectionForm = () => {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'start',
-                  gap:3
+                  gap: 4,
                 }}
               >
                 <label htmlFor="upload-photo">
@@ -364,7 +365,7 @@ const CollectionForm = () => {
                 {fetchError && <div> Error - failed to load images</div>} */}
                 <Button
                   sx={{
-                    width: '30%',
+                    width: '40%',
                     fontFamily: 'Quicksand',
                     paddingX: '20px',
                     paddingY: '5px',

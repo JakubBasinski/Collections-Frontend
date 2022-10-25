@@ -16,7 +16,7 @@ const useMutation = (url) => {
     axios
       .post(
         'http://localhost:3001/collection/create',
-        { data },
+         data ,
         {
           headers: {
             Authorization: token,
