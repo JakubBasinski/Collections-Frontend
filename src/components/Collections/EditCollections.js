@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Grid, Typography, Box } from '@mui/material';
 import ItemCard from '../Items/ItemCard';
-import { motion } from 'framer-motion';
-import classes from './LargestCollectionList.module.css';
+
 
 const dummySingleItem1 = {
   id: '1251454323451',
@@ -46,6 +45,16 @@ const dummyLatestItems = [
   dummySingleItem3,
   dummySingleItem4,
   dummySingleItem5,
+  dummySingleItem1,
+  dummySingleItem2,
+  dummySingleItem3,
+  dummySingleItem4,
+  dummySingleItem5,
+  dummySingleItem1,
+  dummySingleItem2,
+  dummySingleItem3,
+  dummySingleItem4,
+  dummySingleItem5,
 ];
 
 const EditCollections = () => {
@@ -70,9 +79,9 @@ const EditCollections = () => {
             marginBottom: '40px',
           }}
         >
-          Recently added items
+          Your Collections
         </Typography>
-        <Grid container spacing={3}>
+        <Grid container spacing={2}>
           {dummyLatestItems.map((singleItem) => {
             return (
               <Grid item md={4} key={singleItem.id}>

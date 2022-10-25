@@ -3,6 +3,8 @@ import ReactMarkdown from 'react-markdown';
 import classes from './CollectionForms.module.css';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import IconButton from '@mui/material/IconButton';
+import CloseIcon from '@mui/icons-material/Close';
 
 import {
   Box,
@@ -12,11 +14,29 @@ import {
   TextField,
   Typography,
   MenuItem,
+  Snackbar,
 } from '@mui/material';
+import useMutation from '../Hooks/useMutation';
 
 const initialFieldValues = {
-  name: '',
+  name: null,
   topic: '',
+  description: undefined,
+  integer1name: null,
+  integer2name: null,
+  integer3name: null,
+  string1name: null,
+  string2name: null,
+  string3name: null,
+  data1name: null,
+  data2name: null,
+  data3name: null,
+  text1name: null,
+  text2name: null,
+  text3name: null,
+  checkbox1name: null,
+  checkbox2name: null,
+  checkbox3name: null,
 };
 
 const showOptionalFields = {
@@ -26,34 +46,35 @@ const showOptionalFields = {
   string1: false,
   string2: false,
   string3: false,
+  data1: false,
+  data2: false,
+  data3: false,
+  text1: false,
+  text2: false,
+  text3: false,
+  checkbox1: false,
+  checkbox2: false,
+  checkbox3: false,
 };
 
-const initialOptionalValuesFields = {
-  integer1name: null,
-  integer1value: null,
-  integer2name: null,
-  integer2value: null,
-  integer3name: null,
-  integer3value: null,
-  string1name: null,
-  string1value: null,
-  string2name: null,
-  string2value: null,
-  string3name: null,
-  string3value: null
-};
+const validFileTypes = ['image/jpg', 'image/jpeg', 'image/png'];
+const url = 'http://localhost:3001/collection/create';
 
 const CollectionForm = () => {
-  const [input, setInput] = useState('');
   const [values, setValues] = useState(initialFieldValues);
-  const [optinalValues, setOptionalValues] = useState(
-    initialOptionalValuesFields
-  );
   const [optionalFields, setOptionalCheckboxes] = useState(showOptionalFields);
-
   const [descriptionPreview, setDescriptionPreview] = useState(false);
   const [customizationPreview, setCustomizationPreview] = useState(false);
   const [uploadFile, setFile] = useState(null);
+  const [singInMessage, setSignInMessage] = useState(null);
+
+  console.log(values.description);
+  console.log(values.name);
+  console.log(values.topic);
+
+  const signInMessageHandler = (message) => {
+    setSignInMessage(message);
+  };
 
   const fileSelectedHandler = (e) => {
     setFile(e.target.files[0]);
@@ -75,96 +96,87 @@ const CollectionForm = () => {
     });
   };
 
-  const handleOptionalInputChange = (e) => {
-    const { name, value } = e.target;
-    setOptionalValues({
-      ...optinalValues,
-      [name]: value,
-    });
-  };
-
   const handleOptional = (e) => {
     let { name } = e.target;
-    console.log(optionalFields.integer1);
     setOptionalCheckboxes({
       ...optionalFields,
       [name]: !optionalFields[name],
     });
   };
 
-  const submitCollectionHandler = (event) => {
-    event.preventDefault()
+  const {
+    mutate: uploadImage,
+    isLoading: uploading,
+    error: uploadError,
+  } = useMutation(url);
+
+  const submitCollectionHandler = async (event) => {
+    event.preventDefault();
     const tokenUser = localStorage.getItem('token');
-    console.log(tokenUser);
+    if (!validFileTypes.find((type) => type === uploadFile.type)) {
+      signInMessageHandler('File must be in JPG/PNG format');
+    }
+    const fd = new FormData();
 
-    const url = 'http://localhost:3001/collection/create';
-    console.log(
-      optinalValues.integer2name,
-      optinalValues.integer3name,
-      optinalValues.integer1name
-    );
-    fetch(url, {
-      method: 'POST',
+    fd.append('image', uploadFile);
 
-      body: JSON.stringify({
-        name: values.name,
-        topic: values.topic,
-        what: '???',
-        optionalInt1name: optinalValues.integer1name,
-        optionalInt1value: optinalValues.integer1value,
-        optionalInt2name: optinalValues.integer2name,
-        optionalInt2value: optinalValues.integer2value,
-        optionalInt3name: optinalValues.integer3name,
-        optionalInt3value: optinalValues.integer3value,
-        optionalString1name: optinalValues.string1name,
-        optionalString1value: optinalValues.string1value,
-        optionalString2name: optinalValues.string2name,
-        optionalString2value: optinalValues.string2value,
-        optionalString3name: optinalValues.string3name,
-        optionalString3value: optinalValues.string3value,
-        image: uploadFile
-      }),
-      headers: { 'Content-Type': 'multipart/form-data', Authorization: tokenUser },
-    })
-      .then((res) => {
-        return res.json();
-      })
-      .then((data) => console.log(data))
-      .catch((err) => {
-        console.log(err);
-      });
+    for (const property in values) {
+      fd.append(property, values[property]);
+    }
+
+    await uploadImage(fd).then(signInMessageHandler('image sent'));
   };
 
-  const setInputHandler = (text) => {
-    setInput(<ReactMarkdown children={text} />);
+  // Snackbar
+  const [open, setOpen] = useState(false);
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpen(false);
   };
+  const action = (
+    <React.Fragment>
+      <IconButton
+        size="small"
+        aria-label="close"
+        color="inherit"
+        onClick={handleClose}
+        type="button"
+      >
+        <CloseIcon fontSize="small" />
+      </IconButton>
+    </React.Fragment>
+  );
+  ///
 
   return (
-    <Grid item md={7} sx={{ maxHeight: '90%', marginY: '50px' }}>
-      <form className={classes.form} onSubmit={submitCollectionHandler}>
+    <Grid item md={8} sx={{ marginY: '40px' }}>
+      <form
+        className={classes.form}
+        onSubmit={submitCollectionHandler}
+        encType="multipart/form"
+      >
         <FormControl
           sx={{
-            width: '90%',
-            gap: 1,
+            gap: 2,
             paddingY: '50px',
             borderRadius: '10px',
             color: 'grey',
             backdropFilter: 'invert(10%)',
             paddingX: '50px',
             display: 'flex',
-            minHeight: '50%',
-            maxHeight: '80%',
-            margin: 'auto',
             overflow: 'auto',
           }}
         >
-          <Box sx={{ display: 'flex', gap: 2, height: '100%' }}>
+          <Box sx={{ display: 'flex', gap: 2 }}>
             <Box
               sx={{
                 display: 'flex',
                 flexDirection: 'column',
-                gap: 1,
+                gap: 2,
                 width: '50%',
+                justifyContent: 'start',
               }}
             >
               <Box sx={{ display: 'flex', gap: 1 }}>
@@ -175,6 +187,7 @@ const CollectionForm = () => {
                   variant="filled"
                   sx={{ width: '50%' }}
                   autoComplete="off"
+                  value={values.name}
                   onChange={handleInputChange}
                 />
 
@@ -207,12 +220,10 @@ const CollectionForm = () => {
                   color: '#DCD7C9',
                 }}
               ></Typography>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <TextField type="file" onChange={fileSelectedHandler} />
-              </Box>
+
               <TextField
                 variant="filled"
-                name="Description"
+                name="description"
                 color="success"
                 label="Description"
                 sx={{ width: '100%' }}
@@ -220,8 +231,8 @@ const CollectionForm = () => {
                 rows="4"
                 type="text"
                 autoComplete="off"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
+                value={values.description}
+                onChange={handleInputChange}
               ></TextField>
 
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -229,8 +240,7 @@ const CollectionForm = () => {
                   <VisibilityOffIcon
                     sx={{
                       background: '#1A373C',
-
-                      borderRadius: ' 50%',
+                      borderRadius: '50%',
                       padding: '4px',
                       '&:hover': {
                         cursor: 'pointer',
@@ -244,8 +254,7 @@ const CollectionForm = () => {
                   <VisibilityIcon
                     sx={{
                       background: '#1A373C',
-
-                      borderRadius: ' 50%',
+                      borderRadius: '50%',
                       padding: '4px',
                       '&:hover': {
                         cursor: 'pointer',
@@ -274,8 +283,7 @@ const CollectionForm = () => {
                   <VisibilityOffIcon
                     sx={{
                       background: '#1A373C',
-
-                      borderRadius: ' 50%',
+                      borderRadius: '50%',
                       padding: '4px',
                       '&:hover': {
                         cursor: 'pointer',
@@ -289,8 +297,7 @@ const CollectionForm = () => {
                   <VisibilityIcon
                     sx={{
                       background: '#1A373C',
-
-                      borderRadius: ' 50%',
+                      borderRadius: '50%',
                       padding: '6px',
                       '&:hover': {
                         cursor: 'pointer',
@@ -312,8 +319,67 @@ const CollectionForm = () => {
                     borderColor: '#1A373C',
                   }}
                 >
-                  Customize items
+                  Customize
                 </Typography>
+              </Box>
+
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-evenly',
+                }}
+              >
+                <label htmlFor="upload-photo">
+                  <input
+                    style={{ display: 'none' }}
+                    id="upload-photo"
+                    name="upload-photo"
+                    type="file"
+                    onChange={fileSelectedHandler}
+                  />
+                  <Button
+                    sx={{
+                      fontFamily: 'Quicksand',
+                      paddingX: '20px',
+                      paddingY: '5px',
+                      color: '#DCD7C9',
+                      textTransform: 'none',
+                      fontSize: '1em',
+                      background: '#1A373C',
+                      '&:hover': {
+                        color: '#f8e112',
+                        background: '#1A373C',
+                      },
+                    }}
+                    component="span"
+                  >
+                    Upload image
+                  </Button>
+                </label>
+                {/* {error && <TextField> {error}</TextField>}
+                <div> POSTS </div>
+                {imagesLoading && <div> LOADING SPINNER </div>}
+                {fetchError && <div> Error - failed to load images</div>} */}
+                <Button
+                  sx={{
+                    width: '50%',
+                    fontFamily: 'Quicksand',
+                    paddingX: '20px',
+                    paddingY: '5px',
+                    color: '#DCD7C9',
+                    textTransform: 'none',
+                    fontSize: '1em',
+                    background: '#1A373C',
+                    '&:hover': {
+                      color: '#f8e112',
+                      background: '#1A373C',
+                    },
+                  }}
+                  type="submit"
+                >
+                  Add Collection
+                </Button>
               </Box>
             </Box>
 
@@ -339,625 +405,845 @@ const CollectionForm = () => {
                     gap: 2,
                   }}
                 >
-                  <ReactMarkdown children={input} />
+                  <ReactMarkdown children={values.description} />
                 </Box>
               )}
             </Box>
           </Box>
 
-          <Box
-            sx={{
-              width: '100%',
-              display: 'flex',
-              alignItems: 'center',
-              gap: 1,
-              marginTop: '10px',
-            }}
-          ></Box>
-
           {customizationPreview && (
-            <Box
-              sx={{
-                width: '100%,',
-                display: 'flex',
-                justifyContent: 'space-between',
-              }}
-            >
-              <Box
-                sx={{ width: '30%', display: 'flex', flexDirection: 'column' }}
-              >
-                <Typography
-                  sx={{
-                    display: 'flex',
-                    color: '#DCD7C9',
-                    letterSpacing: 2,
-                    fontSize: '1.3em',
-                    fontFamily: 'QuickSand',
-                    marginBottom: '10px',
-                  }}
-                >
-                  Integer fields
-                </Typography>
+            <Grid container spacing={4}>
+              <Grid item md={4}>
                 <Box
                   sx={{
-                    width: '100%,',
                     display: 'flex',
                     flexDirection: 'column',
-                    gap: 2,
                   }}
                 >
-                  <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-                    <Button
-                      sx={{
-                        minWidth: '1.4rem',
-                        padding: 0,
-                        height: '1.4rem',
-                        borderRadius: '50%',
-                        color: '#DCD7C9',
-                        background: '#1A373C',
-                        display: 'flex',
-                        fontSize: '1.2rem',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        '&:hover': {
-                          color: 'gold',
-                          border: 1,
+                  <Typography
+                    sx={{
+                      display: 'flex',
+                      color: '#DCD7C9',
+                      letterSpacing: 2,
+                      fontSize: '1.2em',
+                      fontFamily: 'QuickSand',
+                      marginBottom: '10px',
+                    }}
+                  >
+                    Integer fields
+                  </Typography>
+                  <Box
+                    sx={{
+                      width: '100%,',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: 2,
+                      height: '50%',
+                      justifyContent: 'start',
+                    }}
+                  >
+                    <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+                      <Button
+                        sx={{
+                          minWidth: '1.4rem',
+                          padding: 0,
+                          height: '1.4rem',
+                          borderRadius: '50%',
+                          color: '#DCD7C9',
                           background: '#1A373C',
-                        },
-                      }}
-                      name="integer1"
-                      onClick={handleOptional}
-                    >
-                      {optionalFields.integer1 ? '-' : '+'}
-                    </Button>
+                          display: 'flex',
+                          fontSize: '1.2rem',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          '&:hover': {
+                            color: 'gold',
 
-                    {optionalFields.integer1 && (
-                      <Box
-                        sx={{ display: 'flex', gap: 1, alignItems: 'center' }}
+                            background: '#1A373C',
+                          },
+                        }}
+                        name="integer1"
+                        onClick={handleOptional}
                       >
-                        <TextField
-                          onChange={handleOptionalInputChange}
-                          name="integer1name"
-                          value={optinalValues.integer1name}
-                          sx={{ width: '40%' }}
-                          label="Name"
-                          size="small"
-                          inputProps={{
-                            className: classes.optionalInput,
-                          }}
-                        />
-                        <TextField
-                          name="integer1value"
-                          value={optinalValues.integer1value}
-                          onChange={handleOptionalInputChange}
-                          size="small"
-                          label="Value"
-                          type="number"
-                          inputProps={{
-                            className: classes.optionalInput,
-                          }}
-                          sx={{ width: '40%' }}
-                        />
-                      </Box>
-                    )}
-                  </Box>
+                        {optionalFields.integer1 ? '-' : '+'}
+                      </Button>
 
-                  <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-                    <Button
-                      sx={{
-                        minWidth: '1.4rem',
-                        padding: 0,
-                        height: '1.4rem',
-                        borderRadius: '50%',
-                        color: '#DCD7C9',
-                        background: '#1A373C',
-                        display: 'flex',
-                        fontSize: '1.2rem',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        '&:hover': {
-                          color: 'gold',
-                          border: 1,
+                      {optionalFields.integer1 && (
+                        <Box
+                          sx={{
+                            display: 'flex',
+                            gap: 1,
+                            alignItems: 'center',
+                          }}
+                        >
+                          <TextField
+                            onChange={handleInputChange}
+                            name="integer1name"
+                            value={values.integer1name}
+                            sx={{ width: '40%' }}
+                            label="Name"
+                            size="small"
+                            inputProps={{
+                              className: classes.optionalInput,
+                            }}
+                          />
+                        </Box>
+                      )}
+                    </Box>
+
+                    <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+                      <Button
+                        sx={{
+                          minWidth: '1.4rem',
+                          padding: 0,
+                          height: '1.4rem',
+                          borderRadius: '50%',
+                          color: '#DCD7C9',
                           background: '#1A373C',
-                        },
-                      }}
-                      name="integer2"
-                      onClick={handleOptional}
-                    >
-                      {optionalFields.integer2 ? '-' : '+'}
-                    </Button>
-
-                    {optionalFields.integer2 && (
-                      <Box
-                        sx={{ display: 'flex', gap: 1, alignItems: 'center' }}
+                          display: 'flex',
+                          fontSize: '1.2rem',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          '&:hover': {
+                            color: 'gold',
+                            border: 1,
+                            background: '#1A373C',
+                          },
+                        }}
+                        name="integer2"
+                        onClick={handleOptional}
                       >
-                        <TextField
-                          sx={{ width: '40%' }}
-                          value={optinalValues.integer2name}
-                          size="small"
-                          name="integer2name"
-                          label="Name"
-                          inputProps={{
-                            className: classes.optionalInput,
-                          }}
-                          onChange={handleOptionalInputChange}
-                        />
-                        <TextField
-                          value={optinalValues.integer2value}
-                          size="small"
-                          label="Value"
-                          type="number"
-                          name="integer2value"
-                          inputProps={{
-                            className: classes.optionalInput,
-                          }}
-                          sx={{ width: '40%' }}
-                          onChange={handleOptionalInputChange}
-                        />
-                      </Box>
-                    )}
-                  </Box>
-                  <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-                    <Button
-                      sx={{
-                        minWidth: '1.4rem',
-                        padding: 0,
-                        height: '1.4rem',
-                        borderRadius: '50%',
-                        color: '#DCD7C9',
-                        background: '#1A373C',
-                        display: 'flex',
-                        fontSize: '1.2rem',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        '&:hover': {
-                          color: 'gold',
-                          border: 1,
+                        {optionalFields.integer2 ? '-' : '+'}
+                      </Button>
+
+                      {optionalFields.integer2 && (
+                        <Box
+                          sx={{ display: 'flex', gap: 1, alignItems: 'center' }}
+                        >
+                          <TextField
+                            sx={{ width: '40%' }}
+                            value={values.integer2name}
+                            size="small"
+                            name="integer2name"
+                            label="Name"
+                            inputProps={{
+                              className: classes.optionalInput,
+                            }}
+                            onChange={handleInputChange}
+                          />
+                        </Box>
+                      )}
+                    </Box>
+                    <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+                      <Button
+                        sx={{
+                          minWidth: '1.4rem',
+                          padding: 0,
+                          height: '1.4rem',
+                          borderRadius: '50%',
+                          color: '#DCD7C9',
                           background: '#1A373C',
-                        },
-                      }}
-                      name="integer3"
-                      onClick={handleOptional}
-                    >
-                      {optionalFields.integer3 ? '-' : '+'}
-                    </Button>
-
-                    {optionalFields.integer3 && (
-                      <Box
-                        sx={{ display: 'flex', gap: 1, alignItems: 'center' }}
+                          display: 'flex',
+                          fontSize: '1.2rem',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          '&:hover': {
+                            color: 'gold',
+                            border: 1,
+                            background: '#1A373C',
+                          },
+                        }}
+                        name="integer3"
+                        onClick={handleOptional}
                       >
-                        <TextField
-                          sx={{ width: '40%' }}
-                          value={optinalValues.integer3name}
-                          size="small"
-                          name="integer3name"
-                          label="Name"
-                          inputProps={{
-                            className: classes.optionalInput,
-                          }}
-                          onChange={handleOptionalInputChange}
-                        />
-                        <TextField
-                          sx={{ width: '40%' }}
-                          value={optinalValues.integer3value}
-                          size="small"
-                          name="integer3value"
-                          type="number"
-                          label="Name"
-                          inputProps={{
-                            className: classes.optionalInput,
-                          }}
-                          onChange={handleOptionalInputChange}
-                        />
-                      </Box>
-                    )}
+                        {optionalFields.integer3 ? '-' : '+'}
+                      </Button>
+
+                      {optionalFields.integer3 && (
+                        <Box
+                          sx={{ display: 'flex', gap: 1, alignItems: 'center' }}
+                        >
+                          <TextField
+                            sx={{ width: '40%' }}
+                            value={values.integer3name}
+                            size="small"
+                            name="integer3name"
+                            label="Name"
+                            inputProps={{
+                              className: classes.optionalInput,
+                            }}
+                            onChange={handleInputChange}
+                          />
+                        </Box>
+                      )}
+                    </Box>
                   </Box>
                 </Box>
-              </Box>
-
-              <Box
-                sx={{ width: '30%', display: 'flex', flexDirection: 'column' }}
-              >
-                <Typography
-                  sx={{
-                    display: 'flex',
-                    color: '#DCD7C9',
-                    letterSpacing: 2,
-                    fontSize: '1.3em',
-                    fontFamily: 'QuickSand',
-                    marginBottom: '10px',
-                  }}
-                >
-                  String fields
-                </Typography>
+              </Grid>
+              <Grid item md={4}>
                 <Box
                   sx={{
-                    width: '100%,',
                     display: 'flex',
                     flexDirection: 'column',
-                    gap: 2,
                   }}
                 >
-                  <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-                    <Button
-                      sx={{
-                        minWidth: '1.4rem',
-                        padding: 0,
-                        height: '1.4rem',
-                        borderRadius: '50%',
-                        color: '#DCD7C9',
-                        background: '#1A373C',
-                        display: 'flex',
-                        fontSize: '1.2rem',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        '&:hover': {
-                          color: 'gold',
-                          border: 1,
+                  <Typography
+                    sx={{
+                      display: 'flex',
+                      color: '#DCD7C9',
+                      letterSpacing: 2,
+                      fontSize: '1.2em',
+                      fontFamily: 'QuickSand',
+                      marginBottom: '10px',
+                    }}
+                  >
+                    String fields
+                  </Typography>
+                  <Box
+                    sx={{
+                      width: '100%,',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: 2,
+                      height: '50%',
+                      justifyContent: 'start',
+                    }}
+                  >
+                    <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+                      <Button
+                        sx={{
+                          minWidth: '1.4rem',
+                          padding: 0,
+                          height: '1.4rem',
+                          borderRadius: '50%',
+                          color: '#DCD7C9',
                           background: '#1A373C',
-                        },
-                      }}
-                      name="string1"
-                      onClick={handleOptional}
-                    >
-                      {optionalFields.string1 ? '-' : '+'}
-                    </Button>
-
-                    {optionalFields.string1 && (
-                      <Box
-                        sx={{ display: 'flex', gap: 1, alignItems: 'center' }}
+                          display: 'flex',
+                          fontSize: '1.2rem',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          '&:hover': {
+                            color: 'gold',
+                            border: 1,
+                            background: '#1A373C',
+                          },
+                        }}
+                        name="string1"
+                        onClick={handleOptional}
                       >
-                        <TextField
-                          onChange={handleOptionalInputChange}
-                          name="string1name"
-                          value={optinalValues.string1name}
-                          sx={{ width: '40%' }}
-                          label="Name"
-                          size="small"
-                          inputProps={{
-                            className: classes.optionalInput,
-                          }}
-                        />
-                        <TextField
-                          name="string1value"
-                          value={optinalValues.string1value}
-                          onChange={handleOptionalInputChange}
-                          size="small"
-                          label="Value"
-                          inputProps={{
-                            className: classes.optionalInput,
-                          }}
-                          sx={{ width: '40%' }}
-                        />
-                      </Box>
-                    )}
-                  </Box>
+                        {optionalFields.string1 ? '-' : '+'}
+                      </Button>
 
-                  <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-                    <Button
-                      sx={{
-                        minWidth: '1.4rem',
-                        padding: 0,
-                        height: '1.4rem',
-                        borderRadius: '50%',
-                        color: '#DCD7C9',
-                        background: '#1A373C',
-                        display: 'flex',
-                        fontSize: '1.2rem',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        '&:hover': {
-                          color: 'gold',
-                          border: 1,
+                      {optionalFields.string1 && (
+                        <Box
+                          sx={{ display: 'flex', gap: 1, alignItems: 'center' }}
+                        >
+                          <TextField
+                            onChange={handleInputChange}
+                            name="string1name"
+                            value={values.string1name}
+                            sx={{ width: '40%' }}
+                            label="Name"
+                            size="small"
+                            inputProps={{
+                              className: classes.optionalInput,
+                            }}
+                          />
+                        </Box>
+                      )}
+                    </Box>
+
+                    <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+                      <Button
+                        sx={{
+                          minWidth: '1.4rem',
+                          padding: 0,
+                          height: '1.4rem',
+                          borderRadius: '50%',
+                          color: '#DCD7C9',
                           background: '#1A373C',
-                        },
-                      }}
-                      name="string2"
-                      onClick={handleOptional}
-                    >
-                      {optionalFields.string2 ? '-' : '+'}
-                    </Button>
-
-                    {optionalFields.string2 && (
-                      <Box
-                        sx={{ display: 'flex', gap: 1, alignItems: 'center' }}
+                          display: 'flex',
+                          fontSize: '1.2rem',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          '&:hover': {
+                            color: 'gold',
+                            border: 1,
+                            background: '#1A373C',
+                          },
+                        }}
+                        name="string2"
+                        onClick={handleOptional}
                       >
-                        <TextField
-                          sx={{ width: '40%' }}
-                          value={optinalValues.string2name}
-                          size="small"
-                          name="string2name"
-                          label="Name"
-                          inputProps={{
-                            className: classes.optionalInput,
-                          }}
-                          onChange={handleOptionalInputChange}
-                        />
-                        <TextField
-                          value={optinalValues.string2value}
-                          size="small"
-                          label="Value"
-                          name="string2value"
-                          inputProps={{
-                            className: classes.optionalInput,
-                          }}
-                          sx={{ width: '40%' }}
-                          onChange={handleOptionalInputChange}
-                        />
-                      </Box>
-                    )}
-                  </Box>
-                  <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-                    <Button
-                      sx={{
-                        minWidth: '1.4rem',
-                        padding: 0,
-                        height: '1.4rem',
-                        borderRadius: '50%',
-                        color: '#DCD7C9',
-                        background: '#1A373C',
-                        display: 'flex',
-                        fontSize: '1.2rem',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        '&:hover': {
-                          color: 'gold',
-                          border: 1,
+                        {optionalFields.string2 ? '-' : '+'}
+                      </Button>
+
+                      {optionalFields.string2 && (
+                        <Box
+                          sx={{ display: 'flex', gap: 1, alignItems: 'center' }}
+                        >
+                          <TextField
+                            sx={{ width: '40%' }}
+                            value={values.string2name}
+                            size="small"
+                            name="string2name"
+                            label="Name"
+                            inputProps={{
+                              className: classes.optionalInput,
+                            }}
+                            onChange={handleInputChange}
+                          />
+                        </Box>
+                      )}
+                    </Box>
+                    <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+                      <Button
+                        sx={{
+                          minWidth: '1.4rem',
+                          padding: 0,
+                          height: '1.4rem',
+                          borderRadius: '50%',
+                          color: '#DCD7C9',
                           background: '#1A373C',
-                        },
-                      }}
-                      name="string3"
-                      onClick={handleOptional}
-                    >
-                      {optionalFields.string3 ? '-' : '+'}
-                    </Button>
-
-                    {optionalFields.string3 && (
-                      <Box
-                        sx={{ display: 'flex', gap: 1, alignItems: 'center' }}
+                          display: 'flex',
+                          fontSize: '1.2rem',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          '&:hover': {
+                            color: 'gold',
+                            border: 1,
+                            background: '#1A373C',
+                          },
+                        }}
+                        name="string3"
+                        onClick={handleOptional}
                       >
-                        <TextField
-                          sx={{ width: '40%' }}
-                          value={optinalValues.string3name}
-                          size="small"
-                          name="string3name"
-                          label="Name"
-                          inputProps={{
-                            className: classes.optionalInput,
-                          }}
-                          onChange={handleOptionalInputChange}
-                        />
-                        <TextField
-                          sx={{ width: '40%' }}
-                          value={optinalValues.string3value}
-                          size="small"
-                          name="string3value"
-                          label="Name"
-                          inputProps={{
-                            className: classes.optionalInput,
-                          }}
-                          onChange={handleOptionalInputChange}
-                        />
-                      </Box>
-                    )}
+                        {optionalFields.string3 ? '-' : '+'}
+                      </Button>
+
+                      {optionalFields.string3 && (
+                        <Box
+                          sx={{ display: 'flex', gap: 1, alignItems: 'center' }}
+                        >
+                          <TextField
+                            sx={{ width: '40%' }}
+                            value={values.string3name}
+                            size="small"
+                            name="string3name"
+                            label="Name"
+                            inputProps={{
+                              className: classes.optionalInput,
+                            }}
+                            onChange={handleInputChange}
+                          />
+                        </Box>
+                      )}
+                    </Box>
                   </Box>
                 </Box>
-              </Box>
-
-              <Box
-                sx={{ width: '30%', display: 'flex', flexDirection: 'column' }}
-              >
-                <Typography
-                  sx={{
-                    display: 'flex',
-                    color: '#DCD7C9',
-                    letterSpacing: 2,
-                    fontSize: '1.3em',
-                    fontFamily: 'QuickSand',
-                    marginBottom: '10px',
-                  }}
-                >
-                  Data fields
-                </Typography>
+              </Grid>
+              <Grid item md={4}>
                 <Box
                   sx={{
-                    width: '100%,',
                     display: 'flex',
                     flexDirection: 'column',
-                    gap: 2,
                   }}
                 >
-                  <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-                    <Button
-                      sx={{
-                        minWidth: '1.4rem',
-                        padding: 0,
-                        height: '1.4rem',
-                        borderRadius: '50%',
-                        color: '#DCD7C9',
-                        background: '#1A373C',
-                        display: 'flex',
-                        fontSize: '1.2rem',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        '&:hover': {
-                          color: 'gold',
-                          border: 1,
+                  <Typography
+                    sx={{
+                      display: 'flex',
+                      color: '#DCD7C9',
+                      letterSpacing: 2,
+                      fontSize: '1.2em',
+                      fontFamily: 'QuickSand',
+                      marginBottom: '10px',
+                    }}
+                  >
+                    Data fields
+                  </Typography>
+                  <Box
+                    sx={{
+                      width: '100%,',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: 2,
+                      height: '50%',
+                      justifyContent: 'start',
+                    }}
+                  >
+                    <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+                      <Button
+                        sx={{
+                          minWidth: '1.4rem',
+                          padding: 0,
+                          height: '1.4rem',
+                          borderRadius: '50%',
+                          color: '#DCD7C9',
                           background: '#1A373C',
-                        },
-                      }}
-                      name="integer1"
-                      onClick={handleOptional}
-                    >
-                      {optionalFields.integer1 ? '-' : '+'}
-                    </Button>
-
-                    {optionalFields.integer1 && (
-                      <Box
-                        sx={{ display: 'flex', gap: 1, alignItems: 'center' }}
+                          display: 'flex',
+                          fontSize: '1.2rem',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          '&:hover': {
+                            color: 'gold',
+                            border: 1,
+                            background: '#1A373C',
+                          },
+                        }}
+                        name="data1"
+                        onClick={handleOptional}
                       >
-                        <TextField
-                          onChange={handleOptionalInputChange}
-                          name="integer1name"
-                          value={optinalValues.integer1name}
-                          sx={{ width: '40%' }}
-                          label="Name"
-                          size="small"
-                          inputProps={{
-                            className: classes.optionalInput,
-                          }}
-                        />
-                        <TextField
-                          name="integer1value"
-                          value={optinalValues.integer1value}
-                          onChange={handleOptionalInputChange}
-                          size="small"
-                          label="Value"
-                          type="number"
-                          inputProps={{
-                            className: classes.optionalInput,
-                          }}
-                          sx={{ width: '40%' }}
-                        />
-                      </Box>
-                    )}
-                  </Box>
+                        {optionalFields.data1 ? '-' : '+'}
+                      </Button>
 
-                  <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-                    <Button
-                      sx={{
-                        minWidth: '1.4rem',
-                        padding: 0,
-                        height: '1.4rem',
-                        borderRadius: '50%',
-                        color: '#DCD7C9',
-                        background: '#1A373C',
-                        display: 'flex',
-                        fontSize: '1.2rem',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        '&:hover': {
-                          color: 'gold',
-                          border: 1,
+                      {optionalFields.data1 && (
+                        <Box
+                          sx={{ display: 'flex', gap: 1, alignItems: 'center' }}
+                        >
+                          <TextField
+                            onChange={handleInputChange}
+                            name="data1name"
+                            value={values.data1name}
+                            sx={{ width: '40%' }}
+                            label="Name"
+                            size="small"
+                            inputProps={{
+                              className: classes.optionalInput,
+                            }}
+                          />
+                        </Box>
+                      )}
+                    </Box>
+
+                    <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+                      <Button
+                        sx={{
+                          minWidth: '1.4rem',
+                          padding: 0,
+                          height: '1.4rem',
+                          borderRadius: '50%',
+                          color: '#DCD7C9',
                           background: '#1A373C',
-                        },
-                      }}
-                      name="integer2"
-                      onClick={handleOptional}
-                    >
-                      {optionalFields.integer2 ? '-' : '+'}
-                    </Button>
-
-                    {optionalFields.integer2 && (
-                      <Box
-                        sx={{ display: 'flex', gap: 1, alignItems: 'center' }}
+                          display: 'flex',
+                          fontSize: '1.2rem',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          '&:hover': {
+                            color: 'gold',
+                            border: 1,
+                            background: '#1A373C',
+                          },
+                        }}
+                        name="data2"
+                        onClick={handleOptional}
                       >
-                        <TextField
-                          sx={{ width: '40%' }}
-                          value={optinalValues.integer2name}
-                          size="small"
-                          name="integer2name"
-                          label="Name"
-                          inputProps={{
-                            className: classes.optionalInput,
-                          }}
-                          onChange={handleOptionalInputChange}
-                        />
-                        <TextField
-                          value={optinalValues.integer2value}
-                          size="small"
-                          label="Value"
-                          type="number"
-                          name="integer2value"
-                          inputProps={{
-                            className: classes.optionalInput,
-                          }}
-                          sx={{ width: '40%' }}
-                          onChange={handleOptionalInputChange}
-                        />
-                      </Box>
-                    )}
-                  </Box>
-                  <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-                    <Button
-                      sx={{
-                        minWidth: '1.4rem',
-                        padding: 0,
-                        height: '1.4rem',
-                        borderRadius: '50%',
-                        color: '#DCD7C9',
-                        background: '#1A373C',
-                        display: 'flex',
-                        fontSize: '1.2rem',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        '&:hover': {
-                          color: 'gold',
-                          border: 1,
+                        {optionalFields.data2 ? '-' : '+'}
+                      </Button>
+
+                      {optionalFields.data2 && (
+                        <Box
+                          sx={{ display: 'flex', gap: 1, alignItems: 'center' }}
+                        >
+                          <TextField
+                            sx={{ width: '40%' }}
+                            value={values.data2name}
+                            size="small"
+                            name="data2name"
+                            label="Name"
+                            inputProps={{
+                              className: classes.optionalInput,
+                            }}
+                            onChange={handleInputChange}
+                          />
+                        </Box>
+                      )}
+                    </Box>
+                    <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+                      <Button
+                        sx={{
+                          minWidth: '1.4rem',
+                          padding: 0,
+                          height: '1.4rem',
+                          borderRadius: '50%',
+                          color: '#DCD7C9',
                           background: '#1A373C',
-                        },
-                      }}
-                      name="integer3"
-                      onClick={handleOptional}
-                    >
-                      {optionalFields.integer3 ? '-' : '+'}
-                    </Button>
-
-                    {optionalFields.integer3 && (
-                      <Box
-                        sx={{ display: 'flex', gap: 1, alignItems: 'center' }}
+                          display: 'flex',
+                          fontSize: '1.2rem',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          '&:hover': {
+                            color: 'gold',
+                            border: 1,
+                            background: '#1A373C',
+                          },
+                        }}
+                        name="data3"
+                        onClick={handleOptional}
                       >
-                        <TextField
-                          sx={{ width: '40%' }}
-                          value={optinalValues.integer3name}
-                          size="small"
-                          name="integer3name"
-                          label="Name"
-                          inputProps={{
-                            className: classes.optionalInput,
-                          }}
-                          onChange={handleOptionalInputChange}
-                        />
-                        <TextField
-                          sx={{ width: '40%' }}
-                          value={optinalValues.integer3value}
-                          size="small"
-                          name="integer3value"
-                          label="Name"
-                          inputProps={{
-                            className: classes.optionalInput,
-                          }}
-                          onChange={handleOptionalInputChange}
-                        />
-                      </Box>
-                    )}
+                        {optionalFields.data3 ? '-' : '+'}
+                      </Button>
+
+                      {optionalFields.data3 && (
+                        <Box
+                          sx={{ display: 'flex', gap: 1, alignItems: 'center' }}
+                        >
+                          <TextField
+                            sx={{ width: '40%' }}
+                            value={values.data3name}
+                            size="small"
+                            name="data3name"
+                            label="Name"
+                            inputProps={{
+                              className: classes.optionalInput,
+                            }}
+                            onChange={handleInputChange}
+                          />
+                        </Box>
+                      )}
+                    </Box>
                   </Box>
                 </Box>
-              </Box>
-            </Box>
+              </Grid>
+              <Grid item md={4}>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                  }}
+                >
+                  <Typography
+                    sx={{
+                      display: 'flex',
+                      color: '#DCD7C9',
+                      letterSpacing: 2,
+                      fontSize: '1.2em',
+                      fontFamily: 'QuickSand',
+                      marginBottom: '10px',
+                    }}
+                  >
+                    Text fields
+                  </Typography>
+                  <Box
+                    sx={{
+                      width: '100%,',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: 2,
+                      height: '50%',
+                      justifyContent: 'start',
+                    }}
+                  >
+                    <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+                      <Button
+                        sx={{
+                          minWidth: '1.4rem',
+                          padding: 0,
+                          height: '1.4rem',
+                          borderRadius: '50%',
+                          color: '#DCD7C9',
+                          background: '#1A373C',
+                          display: 'flex',
+                          fontSize: '1.2rem',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          '&:hover': {
+                            color: 'gold',
+                            border: 1,
+                            background: '#1A373C',
+                          },
+                        }}
+                        name="text1"
+                        onClick={handleOptional}
+                      >
+                        {optionalFields.text1 ? '-' : '+'}
+                      </Button>
+
+                      {optionalFields.text1 && (
+                        <Box
+                          sx={{ display: 'flex', gap: 1, alignItems: 'center' }}
+                        >
+                          <TextField
+                            onChange={handleInputChange}
+                            name="text1name"
+                            value={values.text1name}
+                            sx={{ width: '40%' }}
+                            label="Name"
+                            size="small"
+                            inputProps={{
+                              className: classes.optionalInput,
+                            }}
+                          />
+                        </Box>
+                      )}
+                    </Box>
+
+                    <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+                      <Button
+                        sx={{
+                          minWidth: '1.4rem',
+                          padding: 0,
+                          height: '1.4rem',
+                          borderRadius: '50%',
+                          color: '#DCD7C9',
+                          background: '#1A373C',
+                          display: 'flex',
+                          fontSize: '1.2rem',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          '&:hover': {
+                            color: 'gold',
+                            border: 1,
+                            background: '#1A373C',
+                          },
+                        }}
+                        name="text2"
+                        onClick={handleOptional}
+                      >
+                        {optionalFields.text2 ? '-' : '+'}
+                      </Button>
+
+                      {optionalFields.text2 && (
+                        <Box
+                          sx={{ display: 'flex', gap: 1, alignItems: 'center' }}
+                        >
+                          <TextField
+                            sx={{ width: '40%' }}
+                            value={values.text2name}
+                            size="small"
+                            name="text2name"
+                            label="Name"
+                            inputProps={{
+                              className: classes.optionalInput,
+                            }}
+                            onChange={handleInputChange}
+                          />
+                        </Box>
+                      )}
+                    </Box>
+                    <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+                      <Button
+                        sx={{
+                          minWidth: '1.4rem',
+                          padding: 0,
+                          height: '1.4rem',
+                          borderRadius: '50%',
+                          color: '#DCD7C9',
+                          background: '#1A373C',
+                          display: 'flex',
+                          fontSize: '1.2rem',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          '&:hover': {
+                            color: 'gold',
+                            border: 1,
+                            background: '#1A373C',
+                          },
+                        }}
+                        name="text3"
+                        onClick={handleOptional}
+                      >
+                        {optionalFields.text3 ? '-' : '+'}
+                      </Button>
+
+                      {optionalFields.text3 && (
+                        <Box
+                          sx={{ display: 'flex', gap: 1, alignItems: 'center' }}
+                        >
+                          <TextField
+                            sx={{ width: '40%' }}
+                            value={values.text3name}
+                            size="small"
+                            name="text3name"
+                            label="Name"
+                            inputProps={{
+                              className: classes.optionalInput,
+                            }}
+                            onChange={handleInputChange}
+                          />
+                        </Box>
+                      )}
+                    </Box>
+                  </Box>
+                </Box>
+              </Grid>
+
+              <Grid item md={4}>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                  }}
+                >
+                  <Typography
+                    sx={{
+                      display: 'flex',
+                      color: '#DCD7C9',
+                      letterSpacing: 2,
+                      fontSize: '1.2em',
+                      fontFamily: 'QuickSand',
+                      marginBottom: '10px',
+                    }}
+                  >
+                    Checkboxes
+                  </Typography>
+                  <Box
+                    sx={{
+                      width: '100%,',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: 2,
+                      height: '50%',
+                      justifyContent: 'start',
+                    }}
+                  >
+                    <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+                      <Button
+                        sx={{
+                          minWidth: '1.4rem',
+                          padding: 0,
+                          height: '1.4rem',
+                          borderRadius: '50%',
+                          color: '#DCD7C9',
+                          background: '#1A373C',
+                          display: 'flex',
+                          fontSize: '1.2rem',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          '&:hover': {
+                            color: 'gold',
+                            border: 1,
+                            background: '#1A373C',
+                          },
+                        }}
+                        name="checkbox1"
+                        onClick={handleOptional}
+                      >
+                        {optionalFields.checkbox1 ? '-' : '+'}
+                      </Button>
+
+                      {optionalFields.checkbox1 && (
+                        <Box
+                          sx={{ display: 'flex', gap: 1, alignItems: 'center' }}
+                        >
+                          <TextField
+                            onChange={handleInputChange}
+                            name="checkbox1name"
+                            value={values.checkbox1name}
+                            sx={{ width: '40%' }}
+                            label="Name"
+                            size="small"
+                            inputProps={{
+                              className: classes.optionalInput,
+                            }}
+                          />
+                        </Box>
+                      )}
+                    </Box>
+
+                    <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+                      <Button
+                        sx={{
+                          minWidth: '1.4rem',
+                          padding: 0,
+                          height: '1.4rem',
+                          borderRadius: '50%',
+                          color: '#DCD7C9',
+                          background: '#1A373C',
+                          display: 'flex',
+                          fontSize: '1.2rem',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          '&:hover': {
+                            color: 'gold',
+                            border: 1,
+                            background: '#1A373C',
+                          },
+                        }}
+                        name="checkbox2"
+                        onClick={handleOptional}
+                      >
+                        {optionalFields.checkbox2 ? '-' : '+'}
+                      </Button>
+
+                      {optionalFields.checkbox2 && (
+                        <Box
+                          sx={{ display: 'flex', gap: 1, alignItems: 'center' }}
+                        >
+                          <TextField
+                            sx={{ width: '40%' }}
+                            value={values.checkbox2name}
+                            size="small"
+                            name="checkbox2name"
+                            label="Name"
+                            inputProps={{
+                              className: classes.optionalInput,
+                            }}
+                            onChange={handleInputChange}
+                          />
+                        </Box>
+                      )}
+                    </Box>
+                    <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+                      <Button
+                        sx={{
+                          minWidth: '1.4rem',
+                          padding: 0,
+                          height: '1.4rem',
+                          borderRadius: '50%',
+                          color: '#DCD7C9',
+                          background: '#1A373C',
+                          display: 'flex',
+                          fontSize: '1.2rem',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          '&:hover': {
+                            color: 'gold',
+                            border: 1,
+                            background: '#1A373C',
+                          },
+                        }}
+                        name="checkbox3"
+                        onClick={handleOptional}
+                      >
+                        {optionalFields.checkbox3 ? '-' : '+'}
+                      </Button>
+
+                      {optionalFields.checkbox3 && (
+                        <Box
+                          sx={{ display: 'flex', gap: 1, alignItems: 'center' }}
+                        >
+                          <TextField
+                            sx={{ width: '40%' }}
+                            value={values.checkbox3name}
+                            size="small"
+                            name="checkbox3name"
+                            label="Name"
+                            inputProps={{
+                              className: classes.optionalInput,
+                            }}
+                            onChange={handleInputChange}
+                          />
+                        </Box>
+                      )}
+                    </Box>
+                  </Box>
+                </Box>
+              </Grid>
+            </Grid>
           )}
-
-          <Button
-            sx={{
-              width: '20%',
-              fontFamily: 'Quicksand',
-              paddingX: '20px',
-              paddingY: '5px',
-              color: '#DCD7C9',
-              textTransform: 'none',
-              fontSize: '1em',
-              background: '#1A373C',
-              '&:hover': {
-                color: '#f8e112',
-                background: '#1A373C',
-              },
-            }}
-            type="submit"
-          >
-            Add Colleciont
-          </Button>
         </FormControl>
       </form>
+
+      <Snackbar
+        open={open}
+        autoHideDuration={4000}
+        onClose={handleClose}
+        message={singInMessage}
+        action={action}
+        anchorOrigin={{
+          horizontal: 'center',
+          vertical: 'bottom',
+        }}
+      />
     </Grid>
   );
 };

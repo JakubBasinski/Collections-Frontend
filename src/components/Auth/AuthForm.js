@@ -35,9 +35,10 @@ const AuthForm = () => {
       [name]: value,
     });
   };
-  
+
 
   const [singInMessage, setSignInMessage] = useState(null);
+
   const signInMessageHandler = (message) => {
     setSignInMessage(message);
   };
@@ -157,8 +158,7 @@ const AuthForm = () => {
         }
       })
       .then((data) => {
-        console.log(isSignInSuccessfull);
-        console.log(data);
+
         signInMessageHandler(data.message);
         setOpen(true);
         if (isSignInSuccessfull && !isLogin) {
