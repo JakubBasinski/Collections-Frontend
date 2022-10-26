@@ -67,8 +67,10 @@ const CollectionForm = () => {
   const [customizationPreview, setCustomizationPreview] = useState(false);
   const [uploadFile, setFile] = useState(null);
   const [singInMessage, setSignInMessage] = useState(null);
+  const [open, setOpen] = useState(false);
 
   const signInMessageHandler = (message) => {
+    setOpen(true);
     setSignInMessage(message);
   };
 
@@ -109,31 +111,34 @@ const CollectionForm = () => {
   const submitCollectionHandler = async (event) => {
     event.preventDefault();
     const token = localStorage.getItem('token');
-
     const fd = new FormData();
-    console.log(uploadFile);
-
-    if (!validFileTypes.find((type) => type === uploadFile.type)) {
-      signInMessageHandler('File must be in JPG/PNG format');
-      console.log(uploadFile);
+    if (uploadFile) {
+      if (!validFileTypes.find((type) => type === uploadFile.type)) {
+        signInMessageHandler('File must be in JPG/PNG format');
+        setOpen(true);
+      }
+      fd.append('image', uploadFile);
     }
-    
-    fd.append('image', uploadFile);
     for (const property in values) {
       fd.append(property, values[property]);
     }
-
-    await uploadImage(fd, token).then(signInMessageHandler('image sent'));
+    try {
+      await uploadImage(fd, token);
+      signInMessageHandler('Collection successfully created');
+      setOpen(true);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   // Snackbar
-  const [open, setOpen] = useState(false);
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
       return;
     }
     setOpen(false);
   };
+
   const action = (
     <React.Fragment>
       <IconButton
@@ -173,21 +178,22 @@ const CollectionForm = () => {
               sx={{
                 display: 'flex',
                 flexDirection: 'column',
-                gap: 3,
+                gap: 2,
                 width: '60%',
                 justifyContent: 'start',
               }}
             >
               <Box sx={{ display: 'flex', gap: 1 }}>
                 <TextField
-                  name="name"
                   label="Collection Name"
+                  name="name"
                   color="success"
                   variant="filled"
                   sx={{ width: '50%' }}
                   autoComplete="off"
                   value={values.name}
                   onChange={handleInputChange}
+                  required
                 />
 
                 <TextField
@@ -200,6 +206,7 @@ const CollectionForm = () => {
                   value={values.topic}
                   select
                   onChange={handleInputChange}
+                  required
                 >
                   <MenuItem value="alcohols">Alcohols</MenuItem>
                   <MenuItem value="books">Books</MenuItem>
@@ -232,6 +239,7 @@ const CollectionForm = () => {
                 autoComplete="off"
                 value={values.description}
                 onChange={handleInputChange}
+                required
               ></TextField>
 
               <Box sx={{ display: 'flex', gap: 1 }}>

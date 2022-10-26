@@ -22,7 +22,7 @@ function App() {
           <Route path="/" element={<MainPage />} />
           <Route path="/adminPanel" element={<AdminPage />} />
           <Route path="login" element={<AuthForm />} />
-          <Route path="profile" element={<UserPage />} />
+          <Route path="profile/:userId" element={<UserPage />} />
         </Routes>
       </Layout>
     </ThemeProvider>

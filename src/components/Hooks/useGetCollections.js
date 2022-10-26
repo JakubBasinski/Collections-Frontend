@@ -1,11 +1,10 @@
 import { useState } from 'react';
 import axios from 'axios';
 
-const useMutation = (url) => {
+const useGetCollections = () => {
   const [state, setState] = useState({
     isLoading: 'false',
     error: '',
-    message: ''
   });
 
   const fn = async (data, token) => {
@@ -13,21 +12,20 @@ const useMutation = (url) => {
       ...prevState,
       isLoading: true,
     }));
-    console.log('token' + token);
     axios
-      .post(url, data, {
+      .get('http://localhost:3001/profile', data, {
         headers: {
           Authorization: token,
         },
       })
       .then((res) => {
-        setState({ isLoading: false, error: ''});
+        console.log(res);
+        setState({ isLoading: false, error: '' });
       })
-
       .catch((error) => setState({ isLoading: false, error }));
   };
 
   return { mutate: fn, ...state };
 };
 
-export default useMutation;
+export default useGetCollections;

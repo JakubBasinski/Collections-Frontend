@@ -28,6 +28,7 @@ const AuthForm = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [values, setValues] = useState(initialFieldValues);
   const [errors, setErrors] = useState(errorsFieldValues);
+  
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setValues({
@@ -139,7 +140,6 @@ const AuthForm = () => {
 
     fetch(url, {
       method: 'POST',
-
       body: JSON.stringify({
         name: values.name,
         email: values.email,
@@ -158,7 +158,7 @@ const AuthForm = () => {
         }
       })
       .then((data) => {
-
+        const userId = data.userId
         signInMessageHandler(data.message);
         setOpen(true);
         if (isSignInSuccessfull && !isLogin) {
@@ -167,7 +167,7 @@ const AuthForm = () => {
 
         if (data.token) {
           authCtx.login(data.token);
-          navigate('/');
+          navigate(`/profile/${userId}`);
         }
       })
       .catch((err) => {
