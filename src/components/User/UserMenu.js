@@ -4,7 +4,6 @@ import { motion } from 'framer-motion';
 import classes from './UserMenu.module.css';
 
 const UserMenu = (props) => {
-  console.log(props);
   const onClickHandlerAdd = () => {
     props.handleAction('add');
   };

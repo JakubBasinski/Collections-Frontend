@@ -1,67 +1,76 @@
-import React from 'react';
-import { Grid, Typography, Box } from '@mui/material';
-import ItemCard from '../Items/ItemCard';
+import React, { useEffect } from 'react';
+import KeyboardDoubleArrowRightIcon from '@mui/icons-material/KeyboardDoubleArrowRight';
 
+import { CardActionArea, makeStyles } from '@material-ui/core/';
+import {
+  Grid,
+  Typography,
+  Box,
+  Card,
+  CardContent,
+  CardMedia,
+  CardActions,
+  Button,
+} from '@mui/material';
+import useGetCollections from '../Hooks/useGetCollections';
 
-const dummySingleItem1 = {
-  id: '1251454323451',
-  name: 'Zakochany bez pamieci',
-  collection: 'Filmy',
-  tags: ['nie wiem co to'],
-  author: 'Kasia',
-};
-const dummySingleItem2 = {
-  id: '1525142133451',
-  name: 'Sok gruszkowy',
-  collection: 'Napoje niegazowane',
-  tags: ['nie wiem co to'],
-  author: 'Kuba',
-};
-const dummySingleItem3 = {
-  id: '125145323451',
-  name: 'Papilot',
-  collection: 'Wakacje',
-  tags: ['nie wiem co to'],
-  author: 'Janek',
-};
-const dummySingleItem4 = {
-  id: '125142223451',
-  name: 'Wladca pierscieni',
-  collection: 'Ksiazki',
-  tags: ['nie wiem co to'],
-  author: 'Szymon',
-};
-const dummySingleItem5 = {
-  id: '125143423451',
-  name: 'Sok gruszkowy',
-  collection: 'Napoje niegazowane',
-  tags: ['nie wiem co to'],
-  author: 'Kuba',
-};
+const useStyles = makeStyles({
+  root: {
+    height: '250px',
+    width: '100%',
+    display: 'flex',
+    background: 'none',
+  },
+  actions: {
+    width: '65%',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'start',
+    backdropFilter: 'invert(10%)',
+  },
+  media: {
+    width: '35%',
+    backdropFilter: 'invert(10%)',
+  },
+  img: {
+    height: '100%',
+    width: '100%',
+  },
+  btn: {
+    display: 'flex',
+    justifyContent: 'start',
+    paddingLeft: '20px',
+    width: '100%',
+    height: '100%',
+    fontFamily: 'Quicksand',
+    color: '#A2CDCB',
+    fontSize: '1.2em',
+    textDecoration: 'none',
+    backgroundColor: '#1A373C',
+    '&:hover': {
+      color: '#f8e112',
 
-const dummyLatestItems = [
-  dummySingleItem1,
-  dummySingleItem2,
-  dummySingleItem3,
-  dummySingleItem4,
-  dummySingleItem5,
-  dummySingleItem1,
-  dummySingleItem2,
-  dummySingleItem3,
-  dummySingleItem4,
-  dummySingleItem5,
-  dummySingleItem1,
-  dummySingleItem2,
-  dummySingleItem3,
-  dummySingleItem4,
-  dummySingleItem5,
-];
+      backgroundColor: '#1A373C',
+    },
+  },
+});
 
 const EditCollections = () => {
+  const {
+    mutate: getCollections,
+    fetchedCollectionsState,
+    isLoading: uploading,
+    error: uploadError,
+  } = useGetCollections();
 
+  useEffect(() => {
+    getCollections();
+  }, []);
+
+  const classes = useStyles();
 
   return (
-    <Grid item md={7}>
+    <Grid item md={8}>
       <Box sx={{ marginTop: '75px' }}>
         <Typography
           variant="h5"
@@ -82,14 +91,103 @@ const EditCollections = () => {
           Your Collections
         </Typography>
         <Grid container spacing={2}>
-          {dummyLatestItems.map((singleItem) => {
+          {fetchedCollectionsState.map((collectionObject) => {
+            let collection = collectionObject.collection;
+            let url = collectionObject.imageUrl;
             return (
-              <Grid item md={4} key={singleItem.id}>
-                <ItemCard
-                  name={singleItem.name}
-                  author={singleItem.author}
-                  collection={singleItem.collection}
-                />
+              <Grid item md={4} key={collection._id}>
+                <Card className={classes.root}>
+                  <CardActionArea className={classes.media}>
+                    {url && (
+                      <CardMedia
+                        className={classes.img}
+                        component="img"
+                        image={url}
+                        title=""
+                      />
+                    )}
+                    {!url && <p>hi</p>}
+                  </CardActionArea>
+
+                  <CardActionArea className={classes.actions}>
+                    <CardContent
+                      sx={{
+                        width: '100%',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'start',
+                        alignItems: 'start',
+                        gap: 0,
+                        padding: '15px',
+                        height: '80%',
+                      }}
+                    >
+                      <Typography
+                        sx={{
+                          padding: 0,
+                          margin: 0,
+                          color: '#A2CDCB',
+                          fontFamily: 'Source Sans Pro',
+                          textShadow: '2px 2px 4px rgb(0,0,0)',
+                          height:'22%'
+                        }}
+                    
+                        variant="h4"
+                      >
+                        {collection.name}
+                      </Typography>
+                      <Typography
+                        sx={{
+                          fontFamily: 'Source Sans Pro',
+                          paddingLeft: '2px',
+                         
+                          height:'10%'
+                        }}
+                        gutterBottom
+                        variant="body2"
+                        color="textSecondary"
+                        component="p"
+                      >
+                        
+                      </Typography>
+                 
+                      <Typography
+                        sx={{
+                          fontFamily: 'Source Sans Pro',
+                          paddingLeft: '2px',
+                          margin: 0,
+                          height:'55%',
+                          fontStyle: 'italic',
+                          display: 'flex',
+                          alignItems: 'start',
+                          fontSize: '1.1rem'
+                          
+                        }}
+                       
+                    
+                        component="p"
+                      >
+                        {collection.description}...
+                      </Typography>
+                    </CardContent>
+
+                    <CardActions
+                      sx={{
+                        width: '100%',
+                        height: '20%',
+                        display: 'flex',
+                        alignItems: 'start',
+                        justifyContent: 'start',
+                        padding: 0,
+                      }}
+                    >
+                      <Button className={classes.btn}>
+                        More Info
+                        <KeyboardDoubleArrowRightIcon />
+                      </Button>
+                    </CardActions>
+                  </CardActionArea>
+                </Card>
               </Grid>
             );
           })}

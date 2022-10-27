@@ -13,6 +13,8 @@ import CatchingPokemonIcon from '@mui/icons-material/CatchingPokemon';
 const Navbar = () => {
   const authCtx = useContext(AuthContext);
   const isLoggedIn = authCtx.isLoggedIn;
+  const userId =  authCtx.userId
+  
   const logoutHandler = () => {
     authCtx.logout();
   };
@@ -72,7 +74,7 @@ const Navbar = () => {
 
             {isLoggedIn && (
               <Link
-                href="/profile"
+                href={`/profile/${userId}`}
                 underline="none"
                 sx={{
                   '&:hover': {

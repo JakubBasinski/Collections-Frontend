@@ -13,7 +13,7 @@ const useMutation = (url) => {
       ...prevState,
       isLoading: true,
     }));
-    console.log('token' + token);
+
     axios
       .post(url, data, {
         headers: {

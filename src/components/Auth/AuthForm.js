@@ -24,11 +24,10 @@ const errorsFieldValues = {
 const AuthForm = () => {
   const authCtx = useContext(AuthContext);
   const navigate = useNavigate();
-
   const [isLogin, setIsLogin] = useState(true);
   const [values, setValues] = useState(initialFieldValues);
   const [errors, setErrors] = useState(errorsFieldValues);
-  
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setValues({
@@ -36,7 +35,6 @@ const AuthForm = () => {
       [name]: value,
     });
   };
-
 
   const [singInMessage, setSignInMessage] = useState(null);
 
@@ -58,8 +56,6 @@ const AuthForm = () => {
       password: '',
     });
   };
-
-
 
   // Snackbar
   const [open, setOpen] = useState(false);
@@ -89,8 +85,7 @@ const AuthForm = () => {
     let url;
     let isSignInSuccessfull;
     event.preventDefault();
-    console.log(isLogin);
-    console.log(values.email.trim());
+
 
     if (values.email.trim() === '') {
       setErrors({
@@ -148,7 +143,6 @@ const AuthForm = () => {
       headers: { 'Content-Type': 'application/json' },
     })
       .then((res) => {
-        console.log(res.status);
         if (res.status === 409) {
           isSignInSuccessfull = false;
           return res.json();
@@ -158,15 +152,16 @@ const AuthForm = () => {
         }
       })
       .then((data) => {
-        const userId = data.userId
+        const userId = data.userId;
+        const token = data.token;
         signInMessageHandler(data.message);
         setOpen(true);
         if (isSignInSuccessfull && !isLogin) {
           switchAuthModeHandler();
         }
 
-        if (data.token) {
-          authCtx.login(data.token);
+        if (data) {
+          authCtx.login(token, userId)
           navigate(`/profile/${userId}`);
         }
       })

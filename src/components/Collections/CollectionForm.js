@@ -126,6 +126,9 @@ const CollectionForm = () => {
       await uploadImage(fd, token);
       signInMessageHandler('Collection successfully created');
       setOpen(true);
+      setValues(initialFieldValues);
+      setOptionalCheckboxes(showOptionalFields)
+
     } catch (error) {
       console.log(error);
     }
