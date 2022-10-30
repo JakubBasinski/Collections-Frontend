@@ -1,18 +1,20 @@
 import React, { useState } from 'react';
 
 const CollectionContext = React.createContext({
-  collections: [],
-  setCollecionts: () => {},
+  mode: '',
+  setMode: (e) => {},
 });
 
 export const CollectionContextProvider = (props) => {
-  const [fetchedCollections, setFetchedCollections] = useState(null);
-  const setCollectionHadler = (data) => {
-    setFetchedCollections(data)
-  }
+  const [edition, setEditionMode] = useState('new');
+
+  const modeHandler = (e) => {
+    setEditionMode(e);
+  };
+
   const contextValue = {
-    collections: fetchedCollections,
-    setCollecionts: setCollectionHadler,
+    mode: edition,
+    setMode: modeHandler,
   };
 
   return (

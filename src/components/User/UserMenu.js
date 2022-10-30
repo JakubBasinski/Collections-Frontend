@@ -1,14 +1,17 @@
-import * as React from 'react';
+import  React, {useContext} from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Grid, Typography, Box } from '@mui/material';
 import { motion } from 'framer-motion';
 import classes from './UserMenu.module.css';
+import CollectionContext from '../../store/collection';
 
 const UserMenu = (props) => {
-  const onClickHandlerAdd = () => {
-    props.handleAction('add');
-  };
-  const onClickHandlerEdit = () => {
-    props.handleAction('edit');
+  const navigate = useNavigate();
+  const colCtx = useContext(CollectionContext)
+  
+
+  const goToPage = (path) => {
+    navigate(`./${path}`);
   };
 
   return (
@@ -49,7 +52,10 @@ const UserMenu = (props) => {
             </Typography>
 
             <Typography
-              onClick={onClickHandlerAdd}
+              onClick={() => {
+                colCtx.setMode('new')
+                goToPage('./add');
+              }}
               fontFamily={'Quicksand'}
               component={motion.li}
               value={'add'}
@@ -77,12 +83,14 @@ const UserMenu = (props) => {
                 textShadow: '0px 0px 8px rgb(255,255,255)',
               }}
             >
-              Add new Collection
+              New Collection
             </Typography>
 
             <Typography
               fontFamily={'Quicksand'}
-              onClick={onClickHandlerEdit}
+              onClick={() => {
+                goToPage('./list');
+              }}
               component={motion.li}
               sx={{
                 borderLeft: 0.5,
@@ -108,7 +116,7 @@ const UserMenu = (props) => {
                 textShadow: '0px 0px 8px rgb(255,255,255)',
               }}
             >
-              Edit Collections
+              List
             </Typography>
           </motion.div>
         </Box>

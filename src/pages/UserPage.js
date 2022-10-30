@@ -1,24 +1,25 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Grid } from '@mui/material';
 import UserMenu from '../components/User/UserMenu';
 import CollectionForm from '../components/Collections/CollectionForm';
-import EditCollection from '../components/Collections/EditCollections';
+import { Routes, Route } from 'react-router-dom';
+import ListCollection from '../components/Collections/ListCollections';
+import CollectionDetails from '../components/Collections/CollectionDetails';
 
 const UserPage = () => {
-  const [userAction, setUserAction] = useState('add');
-
-  const setUserHandler = (action) => {
-    setUserAction(action);
-  };
-
   return (
     <Grid container sx={{ height: '90vh' }} gap={8} justifyContent="start">
-      <UserMenu handleAction={setUserHandler} />
-      {userAction === 'add' && <CollectionForm />}
-      {userAction === 'edit' && <EditCollection />}
-      {userAction === 'singleCollection'}
+      <UserMenu />
+      <Routes>
+        <Route path="add" element={<CollectionForm />} />
+        <Route path="edition/:collectionId" element={<CollectionForm />} />
+        <Route path="list" element={<ListCollection />} />
+        <Route path="details/:collectionID" element={<CollectionDetails />} />
+
+      </Routes>
     </Grid>
   );
 };
 
 export default UserPage;
+

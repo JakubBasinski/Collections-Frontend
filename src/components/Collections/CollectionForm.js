@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
+import { useParams } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import classes from './CollectionForms.module.css';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
-
+import CollectionContext from '../../store/collection';
 import {
   Box,
   Grid,
@@ -58,9 +59,11 @@ const showOptionalFields = {
 };
 
 const validFileTypes = ['image/jpg', 'image/jpeg', 'image/png'];
-const url = 'http://localhost:3001/collection/create';
+let url;
 
 const CollectionForm = () => {
+  const { collectionId } = useParams();
+
   const [values, setValues] = useState(initialFieldValues);
   const [optionalFields, setOptionalCheckboxes] = useState(showOptionalFields);
   const [descriptionPreview, setDescriptionPreview] = useState(false);
@@ -68,6 +71,9 @@ const CollectionForm = () => {
   const [uploadFile, setFile] = useState(null);
   const [singInMessage, setSignInMessage] = useState(null);
   const [open, setOpen] = useState(false);
+  const collectionCtx = useContext(CollectionContext);
+  const mode = collectionCtx.mode;
+
 
   const signInMessageHandler = (message) => {
     setOpen(true);
@@ -102,8 +108,14 @@ const CollectionForm = () => {
     });
   };
 
+  if (collectionCtx.mode === 'new') {
+    url = 'http://localhost:3001/collection/create';
+  } else {
+    url = `http://localhost:3001/collection/edit/${collectionId}`;
+  }
+
   const {
-    mutate: uploadImage,
+    mutate: uploadCollection,
     isLoading: uploading,
     error: uploadError,
   } = useMutation(url);
@@ -123,12 +135,13 @@ const CollectionForm = () => {
       fd.append(property, values[property]);
     }
     try {
-      await uploadImage(fd, token);
+      await uploadCollection(fd, token);
+
+      // TO DO !!!
       signInMessageHandler('Collection successfully created');
       setOpen(true);
       setValues(initialFieldValues);
-      setOptionalCheckboxes(showOptionalFields)
-
+      setOptionalCheckboxes(showOptionalFields);
     } catch (error) {
       console.log(error);
     }
@@ -155,7 +168,6 @@ const CollectionForm = () => {
       </IconButton>
     </React.Fragment>
   );
-  ///
 
   return (
     <Grid item md={8} sx={{ marginY: '40px' }}>
@@ -211,13 +223,13 @@ const CollectionForm = () => {
                   onChange={handleInputChange}
                   required
                 >
-                  <MenuItem value="alcohols">Alcohols</MenuItem>
-                  <MenuItem value="books">Books</MenuItem>
-                  <MenuItem value="films">Films</MenuItem>
-                  <MenuItem value="cars">Cars</MenuItem>
-                  <MenuItem value="boardGames">BoardGames</MenuItem>
-                  <MenuItem value="animals">Animals</MenuItem>
-                  <MenuItem value="nature">Nature</MenuItem>
+                  <MenuItem value="Alcohols">Alcohols</MenuItem>
+                  <MenuItem value="Books">Books</MenuItem>
+                  <MenuItem value="Films">Films</MenuItem>
+                  <MenuItem value="Cars">Cars</MenuItem>
+                  <MenuItem value="Board Games">BoardGames</MenuItem>
+                  <MenuItem value="Animals">Animals</MenuItem>
+                  <MenuItem value="Nature">Nature</MenuItem>
                 </TextField>
               </Box>
               <Typography
@@ -391,7 +403,9 @@ const CollectionForm = () => {
                   }}
                   type="submit"
                 >
-                  Add Collection
+                  {collectionCtx.mode === 'new'
+                    ? 'Add Collection'
+                    : 'Edit Collection'}
                 </Button>
               </Box>
             </Box>

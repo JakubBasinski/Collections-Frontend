@@ -13,8 +13,7 @@ import CatchingPokemonIcon from '@mui/icons-material/CatchingPokemon';
 const Navbar = () => {
   const authCtx = useContext(AuthContext);
   const isLoggedIn = authCtx.isLoggedIn;
-  const userId =  authCtx.userId
-  
+  const userId =  localStorage.getItem('userId')
   const logoutHandler = () => {
     authCtx.logout();
   };

@@ -11,8 +11,8 @@ const AuthContext = React.createContext({
 const retriveStored = () => {
   const storedToken = localStorage.getItem('token');
   const storedId = localStorage.getItem('userId')
-  return { token: storedToken, userId: storedId};
-};
+    return { token: storedToken, userId: storedId};
+  };
 
 
 export const AuthContextProvider = (props) => {

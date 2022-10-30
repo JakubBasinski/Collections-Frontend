@@ -6,6 +6,7 @@ import AuthContext from '../../store/aut-context';
 import Snackbar from '@mui/material/Snackbar';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
+import usePostItem from '../Hooks/usePostItem';
 
 const initialFieldValues = {
   name: '',
@@ -86,7 +87,6 @@ const AuthForm = () => {
     let isSignInSuccessfull;
     event.preventDefault();
 
-
     if (values.email.trim() === '') {
       setErrors({
         ...errors,
@@ -161,7 +161,7 @@ const AuthForm = () => {
         }
 
         if (data) {
-          authCtx.login(token, userId)
+          authCtx.login(token, userId);
           navigate(`/profile/${userId}`);
         }
       })

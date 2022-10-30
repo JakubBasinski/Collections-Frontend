@@ -5,11 +5,11 @@
 
 body {
   font-family: 'Quicksand', sans-serif;
-  background: rgb(3, 60, 65);
+  background: #033c41;
   background: radial-gradient(
     circle,
-    rgb(3, 60, 65, 1) 0%,
-    rgb(42, 59, 65) 100%
+    #033c41 0%,
+    #2a3b41 100%
   );
   overflow: auto;
   margin: 0;

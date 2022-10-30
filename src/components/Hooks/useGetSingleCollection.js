@@ -1,14 +1,15 @@
-import { useState,  } from 'react';
+import { useState } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 
+const useGetSingleCollection = () => {
+  const { collectionID, userId } = useParams();
 
-const useGetCollections = () => {
-  const {userId} = useParams()
   const [state, setState] = useState({
-    fetchedCollectionsState: [],
     isLoading: 'false',
     error: '',
+    fetchedCollection: {},
+    fetchedUrl: ''
   });
 
   const fn = async () => {
@@ -17,18 +18,20 @@ const useGetCollections = () => {
       isLoading: true,
     }));
     axios
-      .get(`http://localhost:3001/profile/${userId}`)
+      .get(`http://localhost:3001/profile/${userId}/edit/${collectionID}`)
       .then((res) => {
-        let collectionsArray;
+        let collection;
+        let url;
         if (res.data) {
-          const fetchedCollections = res.data.updatedCollection;
-          collectionsArray = Object.values(fetchedCollections);
-
+          collection = res.data.collection;
+          url = res.data.singleImageUrl;
+    
         }
         setState({
           isLoading: false,
           error: '',
-          fetchedCollectionsState: collectionsArray,
+          fetchedCollection: collection,
+          fetchedUrl: url,
         });
       })
       .catch((error) => setState({ isLoading: false, error }));
@@ -37,4 +40,4 @@ const useGetCollections = () => {
   return { mutate: fn, ...state };
 };
 
-export default useGetCollections;
+export default useGetSingleCollection;
