@@ -13,7 +13,7 @@ import CatchingPokemonIcon from '@mui/icons-material/CatchingPokemon';
 const Navbar = () => {
   const authCtx = useContext(AuthContext);
   const isLoggedIn = authCtx.isLoggedIn;
-  const userId =  localStorage.getItem('userId')
+  const userId = localStorage.getItem('userId');
   const logoutHandler = () => {
     authCtx.logout();
   };
@@ -87,23 +87,50 @@ const Navbar = () => {
                 Profile
               </Link>
             )}
+            <Link
+              href="/"
+              underline="none"
+              sx={{
+                '&:hover': {
+                  color: '#f8e112',
+                  textShadow: '0px 0px 8px rgb(255,255,255)',
+                },
+                fontFamily: 'Quicksand',
+                color: '#DCD7C9',
+              }}
+            >
+              Items
+            </Link>
 
-            {isLoggedIn && (
-              <Link
-                href="/"
-                underline="none"
-                sx={{
-                  '&:hover': {
-                    color: '#f8e112',
-                    textShadow: '0px 0px 8px rgb(255,255,255)',
-                  },
-                  fontFamily: 'Quicksand',
-                  color: '#DCD7C9',
-                }}
-              >
-                Home
-              </Link>
-            )}
+            <Link
+              href="/collections"
+              underline="none"
+              sx={{
+                '&:hover': {
+                  color: '#f8e112',
+                  textShadow: '0px 0px 8px rgb(255,255,255)',
+                },
+                fontFamily: 'Quicksand',
+                color: '#DCD7C9',
+              }}
+            >
+              Collections
+            </Link>
+
+            <Link
+              href="/"
+              underline="none"
+              sx={{
+                '&:hover': {
+                  color: '#f8e112',
+                  textShadow: '0px 0px 8px rgb(255,255,255)',
+                },
+                fontFamily: 'Quicksand',
+                color: '#DCD7C9',
+              }}
+            >
+              Main Page
+            </Link>
 
             {isLoggedIn && (
               <Link

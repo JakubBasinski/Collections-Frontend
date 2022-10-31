@@ -13,12 +13,13 @@ const useGetSingleCollection = () => {
   });
 
   const fn = async () => {
+    let url = process.env.REACT_APP_URL;
     setState((prevState) => ({
       ...prevState,
       isLoading: true,
     }));
     axios
-      .get(`http://localhost:3001/profile/${userId}/edit/${collectionID}`)
+      .get(`${url}/profile/${userId}/edit/${collectionID}`)
       .then((res) => {
         let collection;
         let url;

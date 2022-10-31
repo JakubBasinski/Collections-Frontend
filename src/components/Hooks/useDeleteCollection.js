@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import axios from 'axios';
 
-
 const useDeleteCollection = () => {
   const [state, setState] = useState({
     isLoading: 'false',
@@ -9,6 +8,7 @@ const useDeleteCollection = () => {
   });
 
   const fn = async (id) => {
+    let url = process.env.REACT_APP_URL;
     const token = localStorage.getItem('token');
     console.log(token);
     setState((prevState) => ({
@@ -17,7 +17,7 @@ const useDeleteCollection = () => {
     }));
     axios
       .post(
-        `http://localhost:3001/collection/delete/${id}`,
+        `${url}/collection/delete/${id}`,
         {},
         {
           headers: {

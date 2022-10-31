@@ -6,7 +6,7 @@ import AuthContext from '../../store/aut-context';
 import Snackbar from '@mui/material/Snackbar';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
-import usePostItem from '../Hooks/usePostItem';
+import { TextareaAutosize } from '@material-ui/core';
 
 const initialFieldValues = {
   name: '',
@@ -28,6 +28,11 @@ const AuthForm = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [values, setValues] = useState(initialFieldValues);
   const [errors, setErrors] = useState(errorsFieldValues);
+  // const [wasSuccessfull, setSuccess] = useState(false);
+
+  // const successHandler = (e) => {
+  //   setSuccess(e);
+  // };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -51,11 +56,7 @@ const AuthForm = () => {
       passwordError: false,
       confirmationError: false,
     });
-    setValues({
-      name: '',
-      email: '',
-      password: '',
-    });
+    setValues(initialFieldValues);
   };
 
   // Snackbar
@@ -82,8 +83,7 @@ const AuthForm = () => {
   );
   ///
 
-  const submitHandler = (event) => {
-    let url;
+  const submitHandler = async (event) => {
     let isSignInSuccessfull;
     event.preventDefault();
 
@@ -127,10 +127,11 @@ const AuthForm = () => {
       confirmationError: false,
     });
 
+    let url = process.env.REACT_APP_URL;
     if (isLogin) {
-      url = 'http://localhost:3001/login';
+      url = `${url}/login`;
     } else {
-      url = 'http://localhost:3001/signup';
+      url = `${url}/signup`;
     }
 
     fetch(url, {
@@ -143,26 +144,23 @@ const AuthForm = () => {
       headers: { 'Content-Type': 'application/json' },
     })
       .then((res) => {
-        if (res.status === 409) {
-          isSignInSuccessfull = false;
-          return res.json();
-        } else {
-          isSignInSuccessfull = true;
-          return res.json();
+        console.log(res);
+        if (res.ok && !isLogin) {
+          switchAuthModeHandler();
+          setSignInMessage('Please login to continue');
         }
+        return res.json();
       })
       .then((data) => {
-        const userId = data.userId;
-        const token = data.token;
-        signInMessageHandler(data.message);
-        setOpen(true);
-        if (isSignInSuccessfull && !isLogin) {
-          switchAuthModeHandler();
+        if (!data.token) {
+          setOpen(true);
+          setSignInMessage(data.message);
         }
-
-        if (data) {
+        if (data.token) {
+          const token = data.token;
+          const userId = data.userId;
           authCtx.login(token, userId);
-          navigate(`/profile/${userId}`);
+          navigate(`/profile/${userId}/list`);
         }
       })
       .catch((err) => {

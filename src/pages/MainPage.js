@@ -5,6 +5,7 @@ import RecentlyAddedCards from '../components/Items/RecentlyAddedCards';
 
 
 const MainPage = () => {
+  
   return (
     <Grid container sx={{ height: '100vh' }} gap={8} justifyContent="start">
       <LargestCollectionList />

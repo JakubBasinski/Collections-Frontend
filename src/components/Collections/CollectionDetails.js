@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { CardActionArea } from '@material-ui/core/';
 import {
   Grid,
@@ -7,13 +7,23 @@ import {
   Card,
   CardContent,
   CardMedia,
+  CardActions,
+  Button,
 } from '@mui/material';
 import useGetSingleCollection from '../Hooks/useGetSingleCollection';
 import ImageNotSupportedIcon from '@mui/icons-material/ImageNotSupported';
 import ItemForm from '../Items/ItemForm';
 import ReactMarkdown from 'react-markdown';
+import ItemList from '../Items/ItemList';
+import AddIcon from '@mui/icons-material/Add';
+import ListIcon from '@mui/icons-material/List';
 
 const CollectionDetails = () => {
+  const [itemsState, setItemState] = useState(true);
+  const handleItemsState = () => {
+    setItemState((p) => !p);
+  };
+
   const {
     mutate: getCollection,
     fetchedCollection,
@@ -38,16 +48,18 @@ const CollectionDetails = () => {
   return (
     <Grid item md={8}>
       <Box sx={{ marginTop: '75px' }}>
-        <Grid container gap={4}>
+        <Grid container gap={2}>
           <Grid item md={4}>
             <Card
               sx={{
                 height: '100%',
+                maxHeight: '100%',
                 width: '90%',
                 backgroundColor: 'transparent',
                 backdropFilter: 'invert(10%)',
                 color: '#A2CDCB',
                 flexWrap: 'wrap',
+                
               }}
             >
               <CardActionArea
@@ -172,7 +184,10 @@ const CollectionDetails = () => {
                   >
                     Description
                   </Typography>
-                  <ReactMarkdown children={fetchedCollection.description} />
+                  <ReactMarkdown
+                    sx={{ textShadow: '2px 2px 4px rgb(0,0,0)' }}
+                    children={fetchedCollection.description}
+                  />
                   <Typography
                     sx={{
                       fontFamily: 'Source Sans Pro',
@@ -210,9 +225,42 @@ const CollectionDetails = () => {
               </CardActionArea>
             </Card>
           </Grid>
+
           <Grid item md={7}>
-            {/* <ItemList /> */}
-            <ItemForm collection={fetchedCollection} />
+            <Box
+              onClick={handleItemsState}
+              sx={{
+                '&:hover': {
+                  color: 'gold',
+                  cursor: 'pointer',
+                },
+                color: '#DCD7C9',
+                display: 'flex',
+                justifyContent: 'end',
+              }}
+            >
+              {itemsState ? <ListIcon /> : <AddIcon />}
+              <Typography
+                variant="h5"
+                fontWeight={600}
+                fontFamily={'Quicksand'}
+                sx={{
+                  paddingBottom: 1,
+                  paddingLeft: 1.1,
+                  borderColor: 'rgba(255, 255, 255, 0.2)',
+
+                  letterSpacing: 2,
+                  fontSize: '1em',
+                }}
+              >
+                {itemsState ? 'List of items' : 'Add item'}
+              </Typography>
+            </Box>
+            {itemsState ? (
+              <ItemForm collection={fetchedCollection} />
+            ) : (
+              <ItemList />
+            )}
           </Grid>
         </Grid>
       </Box>

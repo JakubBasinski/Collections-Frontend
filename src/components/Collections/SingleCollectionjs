@@ -1,0 +1,10 @@
+import CollectionContext from "../../store/collection";
+
+const SingleCollection = () => {
+  return <p> Single Collection View</p>;
+
+
+};
+
+
+export default SingleCollection

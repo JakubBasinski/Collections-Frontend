@@ -1,52 +1,19 @@
-import * as React from 'react';
+import React, { useContext } from 'react';
 import { Grid, Typography, Box } from '@mui/material';
-import { motion } from "framer-motion"
+import { motion } from 'framer-motion';
 import classes from './LargestCollectionList.module.css';
-
-const dummyCollectionBooks = {
-  name: 'My Fav books',
-  description: 'A fantastic collection made by ME ofc',
-  topic: 'Books',
-  image: 'https://picsum.photos/seed/picsum/200/300',
-};
-
-const dummyCollectionAlc = {
-  name: 'Alcohols',
-  description: 'A fantastic collection made by ME ofc',
-  topic: 'Books',
-  image: 'https://picsum.photos/seed/picsum/200/300',
-};
-
-const dummyCollectionExamples = {
-  name: 'Example',
-  description: 'A fantastic collection made by ME ofc',
-  topic: 'Books',
-  image: 'https://picsum.photos/seed/picsum/200/300',
-};
-
-const dummyCollectionDragons = {
-  name: 'Nice',
-  description: 'A fantastic collection made by ME ofc',
-  topic: 'Books',
-  image: 'https://picsum.photos/seed/picsum/200/300',
-};
-
-const dummyCollectionFeniks = {
-  name: 'Zlo',
-  description: 'A fantastic collection made by ME ofc',
-  topic: 'Books',
-  image: 'https://picsum.photos/seed/picsum/200/300',
-};
-
-const allCollections = [
-  dummyCollectionBooks,
-  dummyCollectionAlc,
-  dummyCollectionExamples,
-  dummyCollectionDragons,
-  dummyCollectionFeniks,
-];
+import DataContext from '../../store/data-context';
+import { useNavigate } from 'react-router-dom';
 
 const LargestCollectionList = () => {
+  const dataCtx = useContext(DataContext);
+  const largestColl = dataCtx.largestCollections;
+  const navigate = useNavigate();
+
+  const goToCollection = (e) => {
+    navigate(`/collection/${e}`);
+  };
+
   return (
     <React.Fragment>
       <Grid
@@ -85,10 +52,13 @@ const LargestCollectionList = () => {
             </Typography>
 
             <ul className={classes.cloudTagButtonUl}>
-              {allCollections.map((collection) => {
+              {largestColl.map((collection) => {
                 return (
                   <Typography
-                    key={collection.name}
+                    onClick={() => {
+                      goToCollection(collection._id)
+                    }}
+                    key={collection._id}
                     fontFamily={'Quicksand'}
                     component={motion.li}
                     sx={{

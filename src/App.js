@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useContext } from 'react';
 import './App.css';
 import Layout from './components/Layout/Layout';
 import { createTheme, ThemeProvider } from '@material-ui/core';
@@ -7,6 +7,8 @@ import { Routes, Route } from 'react-router-dom';
 import MainPage from './pages/MainPage';
 import AuthForm from './components/Auth/AuthForm';
 import UserPage from './pages/UserPage';
+import DataContext from './store/data-context';
+import axios from 'axios';
 
 const theme = createTheme({
   typography: {
@@ -15,6 +17,31 @@ const theme = createTheme({
 });
 
 function App() {
+  const dataCtx = useContext(DataContext);
+  useEffect(() => {
+    let url = process.env.REACT_APP_URL;
+    axios
+      .get(`${url}/getAll`)
+      .then((res) => {
+        const data = res.data;
+        console.log(data);
+        if (data) {
+          dataCtx.setCollections(data.collections);
+          dataCtx.setItems(data.items);
+          dataCtx.setLargestCollections(data.largestCollections);
+          dataCtx.setNewItems(data.newestItems);
+
+          let arrayofptions = [];
+          for (let element of data.uniqueTags) {
+            arrayofptions.push({ value: element, label: element });
+          }
+
+          dataCtx.setTags(arrayofptions);
+        }
+      })
+      .catch((err) => console.log(err));
+  }, []);
+
   return (
     <ThemeProvider theme={theme}>
       <Layout>

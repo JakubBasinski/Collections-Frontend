@@ -59,11 +59,8 @@ const showOptionalFields = {
 };
 
 const validFileTypes = ['image/jpg', 'image/jpeg', 'image/png'];
-let url;
-
 const CollectionForm = () => {
   const { collectionId } = useParams();
-
   const [values, setValues] = useState(initialFieldValues);
   const [optionalFields, setOptionalCheckboxes] = useState(showOptionalFields);
   const [descriptionPreview, setDescriptionPreview] = useState(false);
@@ -72,8 +69,6 @@ const CollectionForm = () => {
   const [singInMessage, setSignInMessage] = useState(null);
   const [open, setOpen] = useState(false);
   const collectionCtx = useContext(CollectionContext);
-  const mode = collectionCtx.mode;
-
 
   const signInMessageHandler = (message) => {
     setOpen(true);
@@ -108,10 +103,12 @@ const CollectionForm = () => {
     });
   };
 
+  let url = process.env.REACT_APP_URL;
+
   if (collectionCtx.mode === 'new') {
-    url = 'http://localhost:3001/collection/create';
+    url = `${url}/collection/create`;
   } else {
-    url = `http://localhost:3001/collection/edit/${collectionId}`;
+    url = `${url}/collection/edit/${collectionId}`;
   }
 
   const {

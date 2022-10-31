@@ -6,14 +6,17 @@ import reportWebVitals from './reportWebVitals';
 import { BrowserRouter } from 'react-router-dom';
 import { AuthContextProvider } from './store/aut-context';
 import { CollectionContextProvider } from './store/collection';
+import { DataContextProvider } from './store/data-context';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <AuthContextProvider>
     <CollectionContextProvider>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
+      <DataContextProvider>
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </DataContextProvider>
     </CollectionContextProvider>
   </AuthContextProvider>
 );

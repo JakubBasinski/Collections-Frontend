@@ -1,19 +1,22 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 
 const usePostItem = () => {
   const [state, setState] = useState({
     isLoading: 'false',
     error: '',
+    message: '',
   });
-  const url = 'http://localhost:3001/createItem';
+  let url = process.env.REACT_APP_URL;
+
+
   const fn = async (data, token) => {
     setState((prevState) => ({
       ...prevState,
       isLoading: true,
     }));
     axios
-      .post(url, data, {
+      .post(`${url}/createItem`, data, {
         headers: {
           Authorization: token,
         },

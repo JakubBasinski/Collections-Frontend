@@ -1,8 +1,6 @@
-import AsyncSelect from 'react-select/async';
-import Select from 'react-select';
 import { useParams } from 'react-router-dom';
-import React, { useState } from 'react';
-import { FormControl, TextField, Box, Button } from '@mui/material';
+import React, { useState, useContext, } from 'react';
+import { FormControl, TextField, Box, Button, Snackbar } from '@mui/material';
 import CreatableSelect from 'react-select/creatable';
 import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -12,7 +10,10 @@ import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import usePostItem from '../Hooks/usePostItem';
+import IconButton from '@mui/material/IconButton';
+import CloseIcon from '@mui/icons-material/Close';
+import axios from 'axios';
+import DataContext from '../../store/data-context';
 
 const checkBoxStyle = {
   '&.MuiCheckbox-root': {
@@ -37,18 +38,6 @@ const formControlLabel = {
     marginLeft: '5px',
   },
 };
-
-const options = [
-  { value: 'Kuba', label: 'Kuba', color: '#b00b69' },
-  { value: 'Michał', label: 'Michał', color: '#b00b69' },
-  { value: 'Jan', label: 'Jan', color: '#b00b69' },
-  { value: 'Kiełbasa', label: 'Kiełbasa', color: '#b00b69' },
-  { value: 'Kuba', label: 'Kuba', color: '#b00b69' },
-  { value: 'Michał', label: 'Michał', color: '#b00b69' },
-  { value: 'Jan', label: 'Jan', color: '#b00b69' },
-  { value: 'Kiełbasa', label: 'Kiełbasa', color: '#b00b69' },
-  { value: 'Kuba', label: 'Kuba', color: '#b00b69' },
-];
 
 const customStyles = {
   control: (styles, { data, isDisabled, isFocused, isSelected }) => ({
@@ -110,7 +99,6 @@ const customStyles = {
       color: '#DCD7C9',
     };
   },
-
   menuList: (defaultStyles) => {
     return {
       ...defaultStyles,
@@ -118,7 +106,6 @@ const customStyles = {
       padding: 0,
     };
   },
-
   indicatorSeparator: (defaultStyles) => {
     return {
       display: 'none',
@@ -126,52 +113,177 @@ const customStyles = {
   },
 };
 
-const initialFieldValues = {
-  name: '',
-  id: '',
-};
-
 const ItemForm = (props) => {
   const { collectionID } = useParams();
+  const [open, setOpen] = useState(false);
+  const [singInMessage, setSignInMessage] = useState(null);
+  const dataCtx = useContext(DataContext);
+  const options = dataCtx.tags;
   const collection = props.collection;
-  const [itemValues, setFieldValues] = useState(initialFieldValues);
-  const handleCheck = (e) => {
-    const { name, checked } = e.target;
-    setFieldValues({
-      ...itemValues,
-      [name]: checked,
-    });
+  const date1 = collection.data1name;
+  const date2 = collection.data2name;
+  const date3 = collection.data3name;
+  const string1 = collection.string1name;
+  const string2 = collection.string2name;
+  const string3 = collection.string3name;
+  const int1 = collection.integer1name;
+  const int2 = collection.integer2name;
+  const int3 = collection.integer3name;
+  const text1 = collection.text1name;
+  const text2 = collection.text2name;
+  const text3 = collection.text3name;
+  const check1 = collection.checkbox1name;
+  const check2 = collection.checkbox2name;
+  const check3 = collection.checkbox3name;
+
+  const fieldNames = {
+    date1name: date1,
+    date2name: date2,
+    date3name: date3,
+    string1name: string1,
+    string2name: string2,
+    string3name: string3,
+    int1name: int1,
+    int2name: int2,
+    int3name: int3,
+    text1name: text1,
+    text2name: text2,
+    text3name: text3,
+    check1name: check1,
+    chack2name: check2,
+    check3name: check3,
+  };
+  const initialFieldValues = {
+    name: '',
+    id: '',
+    date1value: Date.now(),
+    date2value: Date.now(),
+    date3value: Date.now(),
+    string1value: '',
+    string2value: '',
+    string3value: '',
+    int1value: '',
+    int2value: '',
+    int3value: '',
+    text1value: '',
+    text2value: '',
+    text3value: '',
+    check1value: false,
+    check2value: false,
+    check3value: false,
   };
 
-  const handleData1Input = (e) => {
-    const date1 = collection.data1name;
+  const [itemValues, setFieldValues] = useState(initialFieldValues);
+  const [tagValue, setTags] = useState(null);
+  const handleTags = (e) => {
+    const pickedTags = e.map(({ value, label }) => value);
+    setTags(pickedTags);
+  };
+  const handleCheck1 = (e) => {
+    const { checked } = e.target;
     setFieldValues({
       ...itemValues,
-      [date1]: e,
+      check1value: checked,
+    });
+  };
+  const handleCheck2 = (e) => {
+    const { checked } = e.target;
+    setFieldValues({
+      ...itemValues,
+      check2value: checked,
+    });
+  };
+  const handleCheck3 = (e) => {
+    const { checked } = e.target;
+    setFieldValues({
+      ...itemValues,
+      check3value: checked,
+    });
+  };
+  const handleData1Input = (e) => {
+    setFieldValues({
+      ...itemValues,
+      date1value: e,
     });
   };
   const handleData2Input = (e) => {
-    const date2 = collection.data2name;
     setFieldValues({
       ...itemValues,
-      [date2]: e,
+      date2value: e,
     });
   };
   const handleData3Input = (e) => {
-    const date3 = collection.data3name;
     setFieldValues({
       ...itemValues,
-      [date3]: e,
-    });
-  };
-  const handleTags = (e) => {
-    const pickedTags = e.map(({ value, label }) => value);
-    setFieldValues({
-      ...itemValues,
-      tags: pickedTags,
+      date3value: e,
     });
   };
 
+  const handleString1Input = (e) => {
+    const { value } = e.target;
+    setFieldValues({
+      ...itemValues,
+      string1value: value,
+    });
+  };
+  const handleString2Input = (e) => {
+    const { value } = e.target;
+    setFieldValues({
+      ...itemValues,
+      string2value: value,
+    });
+  };
+  const handleString3Input = (e) => {
+    const { value } = e.target;
+    setFieldValues({
+      ...itemValues,
+      string3value: value,
+    });
+  };
+
+  const handleInt1Input = (e) => {
+    const { value } = e.target;
+    setFieldValues({
+      ...itemValues,
+      int1value: value,
+    });
+  };
+  const handleInt2Input = (e) => {
+    const { value } = e.target;
+    setFieldValues({
+      ...itemValues,
+      int2value: value,
+    });
+  };
+  const handleInt3Input = (e) => {
+    const { value } = e.target;
+    setFieldValues({
+      ...itemValues,
+      int3value: value,
+    });
+  };
+
+  const handleText1Input = (e) => {
+    const { value } = e.target;
+    setFieldValues({
+      ...itemValues,
+      text1value: value,
+    });
+  };
+  const handleText2Input = (e) => {
+    const { value } = e.target;
+    setFieldValues({
+      ...itemValues,
+      text2value: value,
+    });
+  };
+  const handleText3Input = (e) => {
+    const { value } = e.target;
+    setFieldValues({
+      ...itemValues,
+      text3value: value,
+    });
+  };
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFieldValues({
@@ -180,57 +292,62 @@ const ItemForm = (props) => {
     });
   };
 
-  const optCheckboxes = [
-    collection.checkbox1name,
-    collection.checkbox2name,
-    collection.checkbox3name,
-  ];
-  const optInts = [
-    collection.integer1name,
-    collection.integer2name,
-    collection.integer3name,
-  ];
-  const optStrings = [
-    collection.string1name,
-    collection.string2name,
-    collection.string3name,
-  ];
-  const optTexts = [
-    collection.text1name,
-    collection.text2name,
-    collection.text3name,
-  ];
 
-  const {
-    mutate: uploadItem,
-    isLoading: uploading,
-    error: uploadError,
-  } = usePostItem();
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpen(false);
+  };
+  const action = (
+    <React.Fragment>
+      <IconButton
+        size="small"
+        aria-label="close"
+        color="inherit"
+        onClick={handleClose}
+        type="button"
+      >
+        <CloseIcon fontSize="small" />
+      </IconButton>
+    </React.Fragment>
+  );
 
   const submitHandler = async (event) => {
+    let url = process.env.REACT_APP_URL;
+
     event.preventDefault();
     const token = localStorage.getItem('token');
     const fd = new FormData();
     fd.append('collectionId', collectionID);
-    for (const property in itemValues) {
-      fd.append(property, itemValues[property]);
+
+    for (const property in fieldNames) {
+      fd.append(property, fieldNames[property]);
     }
+    for (const value in itemValues) {
+      fd.append(value, itemValues[value]);
+    }
+    fd.append('tags', JSON.stringify(tagValue));
     try {
-      console.log('here?');
-      await uploadItem(fd, token);
+      axios
+        .post(`${url}/createItem`, fd, {
+          headers: {
+            Authorization: token,
+          },
+        })
+        .then((res) => {
+          if (res) {
+            setOpen(true);
+            setSignInMessage(res.data.message);
+            setFieldValues(initialFieldValues);
+            console.log(tagValue);
+            setTags(null);
+            console.log(tagValue);
+          }
+        });
     } catch (err) {
       console.log(err);
     }
-  };
-
-  const loadOption = (searchValue, callback) => {
-    setTimeout(() => {
-      const filteredOptions = options.filter((option) =>
-        option.label.toLowerCase().includes(searchValue.toLowerCase())
-      );
-      console.log(searchValue, filteredOptions);
-      callback(filteredOptions);
-    }, 2000);
   };
 
   return (
@@ -281,20 +398,6 @@ const ItemForm = (props) => {
           ></TextField>
         </Box>
 
-        {/* <Select
-        onChange={handleChange}
-        isMulti
-        styles={customStyles}
-        options={options}
-      ></Select>
-      <AsyncSelect
-        loadOptions={loadOption}
-        onChange={handleChange}
-        defaultOptions
-        isMulti
-      ></AsyncSelect>
-      <CreatableSelect isClearable options={options} /> */}
-
         <Box
           sx={{
             marginX: 'auto',
@@ -307,10 +410,11 @@ const ItemForm = (props) => {
             sx={{ width: '100%' }}
             dateAdapter={AdapterDayjs}
           >
-            {collection.data1name ? (
+            {date1 ? (
               <DatePicker
                 sx={{ width: '30%' }}
-                label={collection.data1name}
+                label={date1}
+                value={itemValues['date1value']}
                 onChange={(date) => {
                   handleData1Input(date);
                 }}
@@ -318,9 +422,10 @@ const ItemForm = (props) => {
                 showDaysOutsideCurrentMonth
               />
             ) : null}
-            {collection.data2name ? (
+            {date2 ? (
               <DatePicker
-                label={collection.data2name}
+                label={date2}
+                value={itemValues['date2value']}
                 onChange={(date) => {
                   handleData2Input(date);
                 }}
@@ -328,9 +433,10 @@ const ItemForm = (props) => {
                 showDaysOutsideCurrentMonth
               />
             ) : null}
-            {collection.data3name ? (
+            {date3 ? (
               <DatePicker
-                label={collection.data3name}
+                label={date3}
+                value={itemValues['date3value']}
                 onChange={(date) => {
                   handleData3Input(date);
                 }}
@@ -340,6 +446,7 @@ const ItemForm = (props) => {
             ) : null}
           </LocalizationProvider>
         </Box>
+
         <Box
           sx={{
             width: '100',
@@ -349,18 +456,33 @@ const ItemForm = (props) => {
             justifyContent: 'space-between',
           }}
         >
-          {optInts.map((int, index) => {
-            return int ? (
-              <TextField
-                key={index}
-                label={int}
-                name={int}
-                onChange={handleInputChange}
-                value={itemValues.int}
-                type="number"
-              />
-            ) : null;
-          })}
+          {int1 ? (
+            <TextField
+              label={int1}
+              name={int1}
+              onChange={handleInt1Input}
+              value={itemValues['int1value']}
+              type="number"
+            />
+          ) : null}
+          {int2 ? (
+            <TextField
+              label={int2}
+              name={int2}
+              onChange={handleInt2Input}
+              value={itemValues['int2value']}
+              type="number"
+            />
+          ) : null}
+          {int3 ? (
+            <TextField
+              label={int3}
+              name={int3}
+              onChange={handleInt3Input}
+              value={itemValues['int3value']}
+              type="number"
+            />
+          ) : null}
         </Box>
 
         <Box
@@ -372,17 +494,30 @@ const ItemForm = (props) => {
             justifyContent: 'space-between',
           }}
         >
-          {optStrings.map((string, index) => {
-            return string ? (
-              <TextField
-                key={index}
-                label={string}
-                name={string}
-                onChange={handleInputChange}
-                value={itemValues.string}
-              />
-            ) : null;
-          })}
+          {string1 ? (
+            <TextField
+              label={string1}
+              name={string1}
+              onChange={handleString1Input}
+              value={itemValues['string1value']}
+            />
+          ) : null}
+          {string2 ? (
+            <TextField
+              label={string2}
+              name={string2}
+              onChange={handleString2Input}
+              value={itemValues['string2value']}
+            />
+          ) : null}
+          {string3 ? (
+            <TextField
+              label={string3}
+              name={string3}
+              onChange={handleString3Input}
+              value={itemValues['string3value']}
+            />
+          ) : null}
         </Box>
 
         <Box
@@ -393,19 +528,36 @@ const ItemForm = (props) => {
             justifyContent: 'space-between',
           }}
         >
-          {optTexts.map((text, index) => {
-            return text ? (
-              <TextField
-                key={index}
-                label={text}
-                name={text}
-                multiline
-                rows={3}
-                onChange={handleInputChange}
-                value={itemValues.text}
-              />
-            ) : null;
-          })}
+          {text1 ? (
+            <TextField
+              label={text1}
+              name={text1}
+              multiline
+              rows={3}
+              onChange={handleText1Input}
+              value={itemValues['text1value']}
+            />
+          ) : null}
+          {text2 ? (
+            <TextField
+              label={text2}
+              name={text2}
+              multiline
+              rows={3}
+              onChange={handleText2Input}
+              value={itemValues['text2value']}
+            />
+          ) : null}
+          {text3 ? (
+            <TextField
+              label={text3}
+              name={text3}
+              multiline
+              rows={3}
+              onChange={handleText3Input}
+              value={itemValues['text3value']}
+            />
+          ) : null}
         </Box>
 
         <FormGroup
@@ -415,26 +567,56 @@ const ItemForm = (props) => {
             justifyContent: 'space-evenly',
           }}
         >
-          {optCheckboxes.map((box, index) => {
-            return box ? (
-              <FormControlLabel
-                key={index}
-                control={
-                  <Checkbox
-                    checkedIcon={<CheckCircleOutlineIcon />}
-                    icon={<RadioButtonUncheckedIcon />}
-                    sx={checkBoxStyle}
-                    onChange={handleCheck}
-                    value={itemValues.box}
-                    name={box}
-                  />
-                }
-                label={box}
-                sx={formControlLabel}
-              />
-            ) : null;
-          })}
+          {check1 ? (
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checkedIcon={<CheckCircleOutlineIcon />}
+                  icon={<RadioButtonUncheckedIcon />}
+                  sx={checkBoxStyle}
+                  onChange={handleCheck1}
+                  checked={itemValues['check1value']}
+                  name={check1}
+                />
+              }
+              label={check1}
+              sx={formControlLabel}
+            />
+          ) : null}
+          {check2 ? (
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checkedIcon={<CheckCircleOutlineIcon />}
+                  icon={<RadioButtonUncheckedIcon />}
+                  sx={checkBoxStyle}
+                  onChange={handleCheck2}
+                  checked={itemValues['check2value']}
+                  name={check2}
+                />
+              }
+              label={check2}
+              sx={formControlLabel}
+            />
+          ) : null}
+          {check3 ? (
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checkedIcon={<CheckCircleOutlineIcon />}
+                  icon={<RadioButtonUncheckedIcon />}
+                  sx={checkBoxStyle}
+                  onChange={handleCheck3}
+                  checked={itemValues['check3value']}
+                  name={check3}
+                />
+              }
+              label={check3}
+              sx={formControlLabel}
+            />
+          ) : null}
         </FormGroup>
+
         <Box
           sx={{
             width: '100%',
@@ -470,6 +652,18 @@ const ItemForm = (props) => {
           </Button>
         </Box>
       </FormControl>
+
+      <Snackbar
+        open={open}
+        autoHideDuration={2000}
+        onClose={handleClose}
+        message={singInMessage}
+        action={action}
+        anchorOrigin={{
+          horizontal: 'center',
+          vertical: 'bottom',
+        }}
+      />
     </form>
   );
 };
