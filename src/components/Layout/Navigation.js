@@ -87,21 +87,7 @@ const Navbar = () => {
                 Profile
               </Link>
             )}
-            <Link
-              href="/"
-              underline="none"
-              sx={{
-                '&:hover': {
-                  color: '#f8e112',
-                  textShadow: '0px 0px 8px rgb(255,255,255)',
-                },
-                fontFamily: 'Quicksand',
-                color: '#DCD7C9',
-              }}
-            >
-              Items
-            </Link>
-
+        
             <Link
               href="/collections"
               underline="none"

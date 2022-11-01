@@ -8,7 +8,9 @@ import MainPage from './pages/MainPage';
 import AuthForm from './components/Auth/AuthForm';
 import UserPage from './pages/UserPage';
 import DataContext from './store/data-context';
+import CollectionsPage from './pages/CollectionsPage'
 import axios from 'axios';
+import SingleCollection from './components/Collections/SingleCollection';
 
 const theme = createTheme({
   typography: {
@@ -24,13 +26,13 @@ function App() {
       .get(`${url}/getAll`)
       .then((res) => {
         const data = res.data;
-        console.log(data);
+  
         if (data) {
-          dataCtx.setCollections(data.collections);
+          dataCtx.setCollections(data.updatedCollection);
           dataCtx.setItems(data.items);
           dataCtx.setLargestCollections(data.largestCollections);
           dataCtx.setNewItems(data.newestItems);
-
+          dataCtx.setUsers(data.users)
           let arrayofptions = [];
           for (let element of data.uniqueTags) {
             arrayofptions.push({ value: element, label: element });
@@ -50,6 +52,8 @@ function App() {
           <Route path="/adminPanel" element={<AdminPage />} />
           <Route path="login" element={<AuthForm />} />
           <Route path="profile/:userId/*" element={<UserPage />} />
+          <Route path="collections" element={<CollectionsPage />}></Route>
+          <Route path="collection/:collectionId" element={<SingleCollection />}></Route>
         </Routes>
       </Layout>
     </ThemeProvider>

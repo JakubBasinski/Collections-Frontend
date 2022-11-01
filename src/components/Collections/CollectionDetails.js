@@ -7,8 +7,6 @@ import {
   Card,
   CardContent,
   CardMedia,
-  CardActions,
-  Button,
 } from '@mui/material';
 import useGetSingleCollection from '../Hooks/useGetSingleCollection';
 import ImageNotSupportedIcon from '@mui/icons-material/ImageNotSupported';
@@ -28,8 +26,6 @@ const CollectionDetails = () => {
     mutate: getCollection,
     fetchedCollection,
     fetchedUrl,
-    isLoading: uploading,
-    error: uploadError,
   } = useGetSingleCollection();
 
   useEffect(() => {
@@ -59,7 +55,6 @@ const CollectionDetails = () => {
                 backdropFilter: 'invert(10%)',
                 color: '#A2CDCB',
                 flexWrap: 'wrap',
-                
               }}
             >
               <CardActionArea

@@ -113,8 +113,6 @@ const CollectionForm = () => {
 
   const {
     mutate: uploadCollection,
-    isLoading: uploading,
-    error: uploadError,
   } = useMutation(url);
 
   const submitCollectionHandler = async (event) => {
@@ -133,8 +131,6 @@ const CollectionForm = () => {
     }
     try {
       await uploadCollection(fd, token);
-
-      // TO DO !!!
       signInMessageHandler('Collection successfully created');
       setOpen(true);
       setValues(initialFieldValues);
@@ -144,7 +140,6 @@ const CollectionForm = () => {
     }
   };
 
-  // Snackbar
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
       return;

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useContext } from 'react';
 import { Grid } from '@mui/material';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -13,10 +13,13 @@ import ControlPointIcon from '@mui/icons-material/ControlPoint';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 import BlockIcon from '@mui/icons-material/Block';
 import classes from './AdminPage.module.css';
+import DataContext from '../store/data-context';
+import { useTabContext } from '@mui/base';
 
-function createData(name, view, block, deleteUser, addAdmin, removeAdmin) {
+function createData(name, id, view, block, deleteUser, addAdmin, removeAdmin) {
   return {
     name,
+    id,
     view,
     block,
     deleteUser,
@@ -25,24 +28,6 @@ function createData(name, view, block, deleteUser, addAdmin, removeAdmin) {
   };
 }
 
-const rows = [
-  createData(
-    'Radek',
-    'Profile',
-    'Block',
-    'Delete',
-    'Add Admin',
-    'Remove Admin'
-  ),
-  createData(
-    'Radek',
-    'Profile',
-    'Block',
-    'Delete',
-    'Add Admin',
-    'Remove Admin'
-  ),
-];
 const TableCell = withStyles((theme) => ({
   root: {
     fontFamily: 'Quicksand',
@@ -70,6 +55,19 @@ const TableHead = withStyles((theme) => ({
 }))(MuiTableHead);
 
 const AdminPage = () => {
+  const dataCtx = useContext(DataContext);
+  const rows = [
+    createData(
+      '231321',
+      'Radek',
+      'Profile',
+      'Block',
+      'Delete',
+      'Add Admin',
+      'Remove Admin'
+    ),
+  ];
+
   return (
     <Grid container justifyContent="center">
       <Grid item md={7}>
@@ -77,6 +75,7 @@ const AdminPage = () => {
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
             <TableHead>
               <TableRow>
+                <TableCellHeader align="center">Id</TableCellHeader>
                 <TableCellHeader>User</TableCellHeader>
                 <TableCellHeader align="center">Show profile</TableCellHeader>
                 <TableCellHeader align="center">Delete user</TableCellHeader>
@@ -100,6 +99,9 @@ const AdminPage = () => {
                 >
                   <TableCell component="th" scope="row">
                     {row.name}
+                  </TableCell>
+                  <TableCell component="th" scope="row">
+                    {row.id}
                   </TableCell>
                   <TableCell align="center">
                     <SearchIcon className={classes.icons} />

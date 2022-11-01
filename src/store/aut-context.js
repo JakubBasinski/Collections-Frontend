@@ -6,6 +6,7 @@ const AuthContext = React.createContext({
   login: (token, user) => {},
   logout: () => {},
   userId: '',
+  isAdmin: false
 });
 
 const retriveStored = () => {
@@ -19,6 +20,7 @@ export const AuthContextProvider = (props) => {
   const storagedData = retriveStored();
   let initialToken;
   let initialUserId 
+
   if (storagedData) {
     initialToken = storagedData.token;
     initialUserId = storagedData.userId

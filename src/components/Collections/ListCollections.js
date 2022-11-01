@@ -49,11 +49,9 @@ const ListCollection = () => {
   const {
     mutate: getCollections,
     fetchedCollectionsState,
-    isLoading: uploading,
-    error: uploadError,
   } = useGetCollections();
 
-  const { mutate: deleteCollection, isLoading, error } = useDeleteCollection();
+  const { mutate: deleteCollection } = useDeleteCollection();
 
   useEffect(() => {
     getCollections();
@@ -102,6 +100,7 @@ const ListCollection = () => {
                     backgroundColor: 'transparent',
                     backdropFilter: 'invert(10%)',
                     color: '#A2CDCB',
+                    flexWrap: 'wrap',
                   }}
                 >
                   <CardActionArea className={classes.media}>
@@ -175,20 +174,6 @@ const ListCollection = () => {
                         {collection.topic}
                       </Typography>
 
-                      <Typography
-                        sx={{
-                          fontFamily: 'Source Sans Pro',
-                          height: '55%',
-                          fontStyle: 'italic',
-                          display: 'flex',
-                          alignItems: 'start',
-                          fontSize: '1.1rem',
-                          color: 'black',
-                        }}
-                        component="p"
-                      >
-                        {collection.description}...
-                      </Typography>
                     </CardContent>
                   </CardActionArea>
 

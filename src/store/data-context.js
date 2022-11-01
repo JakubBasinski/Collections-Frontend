@@ -13,6 +13,8 @@ const DataContext = React.createContext({
   setTags: () => {},
   refetchValue: 0,
   setRefetch: () => {},
+  users: [],
+  setUsers: () => {},
 });
 
 export const DataContextProvider = (props) => {
@@ -22,6 +24,7 @@ export const DataContextProvider = (props) => {
   const [biggestCollections, setBiggestCollections] = useState([]);
   const [newestItems, setNewestItems] = useState([]);
   const [fetchedTags, setFetchedTags] = useState([]);
+  const [fetchedUsers, setFetchedUsers] = useState([]);
 
   const collectionHandler = (e) => {
     setCollectionState(e);
@@ -47,6 +50,10 @@ export const DataContextProvider = (props) => {
     setFetchedTags(e);
   };
 
+  const userHandler = (e) => {
+    setFetchedUsers(e);
+  };
+
   const contextValue = {
     collections: fetchedCollections,
     setCollections: collectionHandler,
@@ -60,6 +67,8 @@ export const DataContextProvider = (props) => {
     setTags: tagsHandler,
     refetchValue: refetchValueState,
     setRefetch: refetchHandler,
+    users: fetchedUsers,
+    setUsers: userHandler,
   };
 
   return (

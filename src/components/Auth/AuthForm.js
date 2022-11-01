@@ -6,7 +6,7 @@ import AuthContext from '../../store/aut-context';
 import Snackbar from '@mui/material/Snackbar';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
-import { TextareaAutosize } from '@material-ui/core';
+
 
 const initialFieldValues = {
   name: '',
@@ -28,11 +28,6 @@ const AuthForm = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [values, setValues] = useState(initialFieldValues);
   const [errors, setErrors] = useState(errorsFieldValues);
-  // const [wasSuccessfull, setSuccess] = useState(false);
-
-  // const successHandler = (e) => {
-  //   setSuccess(e);
-  // };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -59,7 +54,6 @@ const AuthForm = () => {
     setValues(initialFieldValues);
   };
 
-  // Snackbar
   const [open, setOpen] = useState(false);
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
@@ -234,6 +228,9 @@ const AuthForm = () => {
               color="success"
               label="Password"
               value={values.password}
+              inputProps={{
+                type: 'password',
+              }}
               sx={{ width: '60%' }}
               error={errors.passwordError}
               helperText={errors.passwordError && 'Required'}
@@ -246,6 +243,9 @@ const AuthForm = () => {
                 color="success"
                 name="confirmation"
                 label="Confirm Password"
+                inputProps={{
+                  type: 'password',
+                }}
                 value={values.confirmation}
                 onChange={handleInputChange}
                 sx={{ width: '60%' }}
