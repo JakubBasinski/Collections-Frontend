@@ -1,15 +1,12 @@
-import  React, {useContext} from 'react';
+import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Grid, Typography, Box } from '@mui/material';
 import { motion } from 'framer-motion';
-import classes from './UserMenu.module.css';
 import CollectionContext from '../../store/collection';
 
 const UserMenu = (props) => {
   const navigate = useNavigate();
-  const colCtx = useContext(CollectionContext)
-  
-
+  const colCtx = useContext(CollectionContext);
   const goToPage = (path) => {
     navigate(`./${path}`);
   };
@@ -20,6 +17,7 @@ const UserMenu = (props) => {
         item
         md={2}
         marginX="50px"
+        color="primary"
         sx={{
           borderRight: 0.5,
           borderColor: 'rgba(255, 255, 255, 0.2)',
@@ -33,7 +31,7 @@ const UserMenu = (props) => {
             width: '100%',
           }}
         >
-          <motion.div className={classes.cloudTagButton}>
+          <motion.div>
             <Typography
               variant="h5"
               fontWeight={600}
@@ -43,7 +41,7 @@ const UserMenu = (props) => {
                 paddingLeft: 1.1,
                 borderBottom: 0.5,
                 borderColor: 'rgba(255, 255, 255, 0.2)',
-                color: '#DCD7C9',
+                color: 'primary.main',
                 letterSpacing: 2,
                 fontSize: '1.6em',
               }}
@@ -53,13 +51,12 @@ const UserMenu = (props) => {
 
             <Typography
               onClick={() => {
-                colCtx.setMode('new')
+                colCtx.setMode('new');
                 goToPage('./add');
               }}
-              fontFamily={'Quicksand'}
-              component={motion.li}
               value={'add'}
               sx={{
+                color: 'primary.main',
                 borderLeft: 0.5,
                 borderBottom: 0.5,
                 borderColor: 'rgba(255, 255, 255, 0.2)',
@@ -74,13 +71,13 @@ const UserMenu = (props) => {
                 fontSize: '1.4em',
                 marginTop: '17px',
                 width: '70%',
-                color: '#DCD7C9',
-              }}
-              whileHover={{
-                scale: 1.15,
-                originX: 0,
-                color: '#f8e112',
-                textShadow: '0px 0px 8px rgb(255,255,255)',
+                transitionDuration: '200ms',
+                '&:hover': {
+                  color: 'secondary.main',
+                  transform: 'scale(1.1)',
+                  transformOrigin: 'left ',
+                  textShadow: '0px 0px 8px rgb(255,255,255)',
+                },
               }}
             >
               New Collection
@@ -91,8 +88,8 @@ const UserMenu = (props) => {
               onClick={() => {
                 goToPage('./list');
               }}
-              component={motion.li}
               sx={{
+                color: 'primary.main',
                 borderLeft: 0.5,
                 borderBottom: 0.5,
                 borderColor: 'rgba(255, 255, 255, 0.2)',
@@ -107,13 +104,13 @@ const UserMenu = (props) => {
                 fontSize: '1.4em',
                 marginTop: '17px',
                 width: '70%',
-                color: '#DCD7C9',
-              }}
-              whileHover={{
-                scale: 1.15,
-                originX: 0,
-                color: '#f8e112',
-                textShadow: '0px 0px 8px rgb(255,255,255)',
+                transitionDuration: '200ms',
+                '&:hover': {
+                  color: 'secondary.main',
+                  transform: 'scale(1.1)',
+                  transformOrigin: 'left ',
+                  textShadow: '0px 0px 8px rgb(255,255,255)',
+                },
               }}
             >
               List

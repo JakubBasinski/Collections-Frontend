@@ -4,7 +4,7 @@
 
 body {
   font-family: 'Quicksand', sans-serif;
-  background: #033c41;
+  /* background: #033c41; */
   background: radial-gradient(
     circle,
     #033c41 0%,
