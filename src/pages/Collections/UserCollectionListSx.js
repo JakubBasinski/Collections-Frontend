@@ -13,7 +13,7 @@ export const listHeader = {
 // props
 
 export const card = {
-  height: '100%',
+  maxHeight: '600px',
   width: '100%',
   backgroundColor: 'transparent',
   backdropFilter: 'invert(10%)',
@@ -22,8 +22,10 @@ export const card = {
 };
 
 export const cardActionImage = {
+  BORDER: 1,
   height: '75%',
   width: '100%',
+  display: 'flex',
 };
 
 export const cardActionDetails = {
@@ -58,13 +60,13 @@ export const editionButton = {
     transition: 'all 0.3s ease 0s',
     transform: 'translateY(-1px)',
   },
-}
+};
 
 export const deleteButton = {
   ...editionButton,
-  color:'#A2CDCB'
-}
+  color: '#A2CDCB',
+};
 
 export const editIcons = {
-  marginLeft : '5px'
-}
+  marginLeft: '5px',
+};

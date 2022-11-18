@@ -1,19 +1,14 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { CardActionArea, makeStyles } from '@material-ui/core/';
+import { makeStyles } from '@material-ui/core/';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import useDeleteCollection from '../../Hooks/useDeleteCollection';
-import ImageNotSupportedIcon from '@mui/icons-material/ImageNotSupported';
 import CollectionCard from '../../components/Collection/CollectionCard';
 import {
   Grid,
   Typography,
   Box,
-  Card,
-  CardContent,
-  CardMedia,
-  CardActions,
   Button,
   Dialog,
   DialogTitle,
@@ -54,7 +49,6 @@ const UserCollectionList = () => {
 
   useEffect(() => {
     getCollections();
-    console.log('count', count);
   }, [count]);
 
   const toDetailsPage = (id) => {

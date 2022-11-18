@@ -37,90 +37,64 @@ const CollectionCard = (props) => {
 
       <CardActionArea sx={props.cardActionDetails}>
         <CardContent sx={props.cardContent}>
-          <Typography
-            sx={{
-              padding: 0,
-              margin: 0,
-              color: '#A2CDCB',
-              fontFamily: 'Source Sans Pro',
-              textShadow: '1px 1px 2px rgb(0,0,0)',
-            }}
-            variant="h4"
-          >
+          <Typography sx={cls.header} variant="h4">
             {props.name}
           </Typography>
 
           <Typography
-            sx={{
-              fontFamily: 'Source Sans Pro',
-              fontSize: '1.2em'
-            }}
-            gutterBottom
+            sx={{ paddingLeft: '2px' }}
             variant="body2"
-            color="textSecondary"
             component="p"
+            gutterBottom
           >
-            {props.topic}
+           # {props.topic}
           </Typography>
 
           {props.description ? (
-            <Typography
+            <Box
               sx={{
-                fontFamily: 'Source Sans Pro',
-                wordWrap: 'break-word',
+                color: 'primary.light',
+                fontSize: '1.1em',
+                lineHeight: '110%',
+                fontFamily: 'QuickSand',
               }}
-              variant="body1"
-              color="textSecondary"
-              component="p"
             >
-              Description
-            </Typography>
+              <ReactMarkdown children={props.description} />
+            </Box>
           ) : null}
 
-          {props.description ? (
-            <ReactMarkdown
-              sx={{ textShadow: '2px 2px 4px rgb(0,0,0)' }}
-              children={props.description}
-            />
+          {props.authorName ? (
+            <Typography
+            sx={{ paddingLeft: '2px' }}
+            variant="body2"
+            component="p"
+            >
+               # {props.authorName}
+            </Typography>
           ) : null}
 
           {props.informations ? (
             <Typography
-              sx={{
-                fontFamily: 'Source Sans Pro',
-                wordWrap: 'break-word',
-              }}
+              sx={cls.additionalInfoHeader}
               gutterBottom
               variant="body1"
-              color="textSecondary"
               component="p"
             >
               Additional informations
             </Typography>
           ) : null}
 
-          {props.informations
-            ? props.informations.map((info, index) => {
-                return (
-                  <Typography
-                    sx={{
-                      width: '100%',
-                      flex: 1,
-                      padding: 0,
-                      margin: 0,
-                      color: '#A2CDCB',
-                      fontSize: '1.3em',
-                      fontFamily: 'Source Sans Pro',
-                      textShadow: '2px 2px 4px rgb(0,0,0)',
-                      wordWrap: 'break-word',
-                    }}
-                    key={'info' + index}
-                  >
-                    {info}
-                  </Typography>
-                );
-              })
-            : null}
+          <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
+            {props.informations
+              ? props.informations.map((info, index) => {
+                  return info ? (
+                    <Typography sx={cls.additionalInfo} key={'info' + index}>
+                      {info}
+                    </Typography>
+                  ) : null;
+                })
+              : null}
+          </Box>
         </CardContent>
       </CardActionArea>
     </Card>
@@ -128,65 +102,3 @@ const CollectionCard = (props) => {
 };
 
 export default CollectionCard;
-
-{
-  /* <CardActions
-sx={{
-  width: '100%',
-  height: '10%',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  padding: 0,
-}}
->
-<Button
-  onClick={(e) => {
-    e.stopPropagation();
-    props.collContext.setMode('edit');
-    props.navigate() 
-  }}
-  sx={{
-    height: '100%',
-    width: '100%',
-    display: 'flex',
-    justifyContent: 'center',
-    fontFamily: 'Source Sans Pro',
-    fontSize: '1em',
-    color: '#A2CDCB',
-    '&:hover': {
-      color: '#f8e112',
-      background: 'rgb(3, 60, 65)',
-    },
-  }}
-  type="button"
->
-  Edit
-  <EditIcon sx={{ marginLeft: '5px' }} fontSize="small" />
-</Button>
-<Button
-  onClick={(e) => {
-    e.stopPropagation();
-    setBindId(collection._id);
-    setOpen(true);
-  }}
-  sx={{
-    height: '100%',
-    width: '100%',
-    display: 'flex',
-    justifyContent: 'center',
-    fontFamily: 'Source Sans Pro',
-    fontSize: '1em',
-    color: '#A2CDCB',
-    '&:hover': {
-      color: '#cb8777',
-      background: 'rgb(3, 60, 65)',
-    },
-  }}
-  type="button"
->
-  Delete
-  <DeleteIcon sx={{ marginLeft: '5px' }} fontSize="small" />
-</Button>
-</CardActions> */
-}

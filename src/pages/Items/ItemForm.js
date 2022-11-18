@@ -1,5 +1,5 @@
 import { useParams } from 'react-router-dom';
-import React, { useState, useContext, } from 'react';
+import React, { useState, useContext } from 'react';
 import { FormControl, TextField, Box, Button, Snackbar } from '@mui/material';
 import CreatableSelect from 'react-select/creatable';
 import FormGroup from '@mui/material/FormGroup';
@@ -14,104 +14,8 @@ import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import axios from 'axios';
 import DataContext from '../../store/data-context';
-
-const checkBoxStyle = {
-  '&.MuiCheckbox-root': {
-    color: '#DCD7C9',
-    backdropFilter: 'non',
-  },
-  '&.Mui-checked': {
-    color: '#A2CDCB',
-  },
-  '&:hover': {
-    boxShadow: 3,
-  },
-  '& .MuiSvgIcon-root': {
-    fontSize: '1.2rem',
-    padding: 0,
-  },
-};
-const formControlLabel = {
-  '& .MuiFormControlLabel-label': {
-    fontSize: '1.5rem',
-    color: '#DCD7C9',
-    marginLeft: '5px',
-  },
-};
-
-const customStyles = {
-  control: (styles, { data, isDisabled, isFocused, isSelected }) => ({
-    ...styles,
-    height: '140%',
-    width: '100%',
-    margin: 'auto',
-    backgroundColor: '#244546',
-    border: isFocused ? 0 : 0,
-    boxShadow: isFocused ? 0 : 0,
-    color: 'red',
-  }),
-  option: (provided, { data, isDisabled, isFocused, isSelected }) => ({
-    ...provided,
-    borderBottom: '1px dotted #2a3b41',
-    backgroundColor: '#466768',
-    color: '#DCD7C9',
-    padding: 20,
-    marign: 0,
-    ':hover': {
-      backgroundColor: '#355657 ',
-    },
-  }),
-  multiValue: (styles, { data }) => {
-    const color = 'white';
-    return {
-      ...styles,
-      color: color,
-      backgroundColor: '#466768',
-    };
-  },
-  multiValueLabel: (styles, { data }) => ({
-    ...styles,
-    color: '#DCD7C9',
-  }),
-  container: (styles, { data }) => ({
-    ...styles,
-    zIndex: '100 !important',
-  }),
-  multiValueRemove: (styles, { data }) => ({
-    ...styles,
-    color: '#DCD7C9',
-    backgroundColor: '#466768',
-    ':hover': {
-      backgroundColor: '#365759',
-      color: '#f8e112',
-      cursor: 'pointer',
-    },
-  }),
-  placeholder: (defaultStyles) => {
-    return {
-      ...defaultStyles,
-      color: '#DCD7C9',
-    };
-  },
-  input: (defaultStyles) => {
-    return {
-      ...defaultStyles,
-      color: '#DCD7C9',
-    };
-  },
-  menuList: (defaultStyles) => {
-    return {
-      ...defaultStyles,
-      margin: 0,
-      padding: 0,
-    };
-  },
-  indicatorSeparator: (defaultStyles) => {
-    return {
-      display: 'none',
-    };
-  },
-};
+import * as cls from './ItemFormSX';
+import { initialFieldValues } from './ItemFormHelper';
 
 const ItemForm = (props) => {
   const { collectionID } = useParams();
@@ -152,25 +56,6 @@ const ItemForm = (props) => {
     check1name: check1,
     chack2name: check2,
     check3name: check3,
-  };
-  const initialFieldValues = {
-    name: '',
-    id: '',
-    date1value: Date.now(),
-    date2value: Date.now(),
-    date3value: Date.now(),
-    string1value: '',
-    string2value: '',
-    string3value: '',
-    int1value: '',
-    int2value: '',
-    int3value: '',
-    text1value: '',
-    text2value: '',
-    text3value: '',
-    check1value: false,
-    check2value: false,
-    check3value: false,
   };
 
   const [itemValues, setFieldValues] = useState(initialFieldValues);
@@ -292,7 +177,6 @@ const ItemForm = (props) => {
     });
   };
 
-
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
       return;
@@ -315,12 +199,10 @@ const ItemForm = (props) => {
 
   const submitHandler = async (event) => {
     let url = process.env.REACT_APP_URL;
-
     event.preventDefault();
     const token = localStorage.getItem('token');
     const fd = new FormData();
     fd.append('collectionId', collectionID);
-
     for (const property in fieldNames) {
       fd.append(property, fieldNames[property]);
     }
@@ -340,9 +222,9 @@ const ItemForm = (props) => {
             setOpen(true);
             setSignInMessage(res.data.message);
             setFieldValues(initialFieldValues);
-            console.log(tagValue);
             setTags(null);
-            console.log(tagValue);
+            props.setRefetch((p) => p + 1);
+            props.setItemState((p) => !p);
           }
         });
     } catch (err) {
@@ -368,7 +250,7 @@ const ItemForm = (props) => {
         <CreatableSelect
           isMulti
           placeholder={<div>Select Tags</div>}
-          styles={customStyles}
+          styles={cls.customStyles}
           options={options}
           name="tags"
           onChange={handleTags}
@@ -377,9 +259,8 @@ const ItemForm = (props) => {
           <TextField
             label="Name"
             name="name"
-            color="success"
             variant="filled"
-            sx={{ width: '50%', marginX: 'auto' }}
+            sx={cls.formInputs}
             autoComplete="off"
             value={itemValues.name}
             onChange={handleInputChange}
@@ -388,9 +269,8 @@ const ItemForm = (props) => {
           <TextField
             label="id"
             name="id"
-            color="success"
             variant="filled"
-            sx={{ width: '50%', marginX: 'auto' }}
+            sx={cls.formInputs}
             autoComplete="off"
             value={itemValues.id}
             onChange={handleInputChange}
@@ -412,13 +292,20 @@ const ItemForm = (props) => {
           >
             {date1 ? (
               <DatePicker
-                sx={{ width: '30%' }}
                 label={date1}
                 value={itemValues['date1value']}
                 onChange={(date) => {
                   handleData1Input(date);
                 }}
-                renderInput={(params) => <TextField {...params} />}
+                InputProps={{
+                  sx: cls.dateInputProps,
+                }}
+                PopperProps={{
+                  sx: cls.datePopperProps,
+                }}
+                renderInput={(params) => (
+                  <TextField sx={cls.dateInputText} {...params} />
+                )}
                 showDaysOutsideCurrentMonth
               />
             ) : null}
@@ -429,7 +316,15 @@ const ItemForm = (props) => {
                 onChange={(date) => {
                   handleData2Input(date);
                 }}
-                renderInput={(params) => <TextField {...params} />}
+                InputProps={{
+                  sx: cls.dateInputProps,
+                }}
+                PopperProps={{
+                  sx: cls.datePopperProps,
+                }}
+                renderInput={(params) => (
+                  <TextField sx={cls.dateInputText} {...params} />
+                )}
                 showDaysOutsideCurrentMonth
               />
             ) : null}
@@ -440,7 +335,15 @@ const ItemForm = (props) => {
                 onChange={(date) => {
                   handleData3Input(date);
                 }}
-                renderInput={(params) => <TextField {...params} />}
+                InputProps={{
+                  sx: cls.dateInputProps,
+                }}
+                PopperProps={{
+                  sx: cls.datePopperProps,
+                }}
+                renderInput={(params) => (
+                  <TextField sx={cls.dateInputText} {...params} />
+                )}
                 showDaysOutsideCurrentMonth
               />
             ) : null}
@@ -460,6 +363,7 @@ const ItemForm = (props) => {
             <TextField
               label={int1}
               name={int1}
+              sx={cls.dateInputText}
               onChange={handleInt1Input}
               value={itemValues['int1value']}
               type="number"
@@ -469,6 +373,7 @@ const ItemForm = (props) => {
             <TextField
               label={int2}
               name={int2}
+              sx={cls.dateInputText}
               onChange={handleInt2Input}
               value={itemValues['int2value']}
               type="number"
@@ -478,6 +383,7 @@ const ItemForm = (props) => {
             <TextField
               label={int3}
               name={int3}
+              sx={cls.dateInputText}
               onChange={handleInt3Input}
               value={itemValues['int3value']}
               type="number"
@@ -498,6 +404,7 @@ const ItemForm = (props) => {
             <TextField
               label={string1}
               name={string1}
+              sx={cls.dateInputText}
               onChange={handleString1Input}
               value={itemValues['string1value']}
             />
@@ -506,6 +413,7 @@ const ItemForm = (props) => {
             <TextField
               label={string2}
               name={string2}
+              sx={cls.dateInputText}
               onChange={handleString2Input}
               value={itemValues['string2value']}
             />
@@ -514,6 +422,7 @@ const ItemForm = (props) => {
             <TextField
               label={string3}
               name={string3}
+              sx={cls.dateInputText}
               onChange={handleString3Input}
               value={itemValues['string3value']}
             />
@@ -534,6 +443,7 @@ const ItemForm = (props) => {
               name={text1}
               multiline
               rows={3}
+              sx={cls.dateInputText}
               onChange={handleText1Input}
               value={itemValues['text1value']}
             />
@@ -544,6 +454,7 @@ const ItemForm = (props) => {
               name={text2}
               multiline
               rows={3}
+              sx={cls.dateInputText}
               onChange={handleText2Input}
               value={itemValues['text2value']}
             />
@@ -552,6 +463,7 @@ const ItemForm = (props) => {
             <TextField
               label={text3}
               name={text3}
+              sx={cls.dateInputText}
               multiline
               rows={3}
               onChange={handleText3Input}
@@ -573,14 +485,14 @@ const ItemForm = (props) => {
                 <Checkbox
                   checkedIcon={<CheckCircleOutlineIcon />}
                   icon={<RadioButtonUncheckedIcon />}
-                  sx={checkBoxStyle}
+                  sx={cls.checkBoxStyle}
                   onChange={handleCheck1}
                   checked={itemValues['check1value']}
                   name={check1}
                 />
               }
               label={check1}
-              sx={formControlLabel}
+              sx={cls.formControlLabel}
             />
           ) : null}
           {check2 ? (
@@ -589,14 +501,14 @@ const ItemForm = (props) => {
                 <Checkbox
                   checkedIcon={<CheckCircleOutlineIcon />}
                   icon={<RadioButtonUncheckedIcon />}
-                  sx={checkBoxStyle}
+                  sx={cls.checkBoxStyle}
                   onChange={handleCheck2}
                   checked={itemValues['check2value']}
                   name={check2}
                 />
               }
               label={check2}
-              sx={formControlLabel}
+              sx={cls.formControlLabel}
             />
           ) : null}
           {check3 ? (
@@ -605,14 +517,14 @@ const ItemForm = (props) => {
                 <Checkbox
                   checkedIcon={<CheckCircleOutlineIcon />}
                   icon={<RadioButtonUncheckedIcon />}
-                  sx={checkBoxStyle}
+                  sx={cls.checkBoxStyle}
                   onChange={handleCheck3}
                   checked={itemValues['check3value']}
                   name={check3}
                 />
               }
               label={check3}
-              sx={formControlLabel}
+              sx={cls.formControlLabel}
             />
           ) : null}
         </FormGroup>

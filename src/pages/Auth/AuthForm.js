@@ -111,7 +111,6 @@ const AuthForm = () => {
       headers: { 'Content-Type': 'application/json' },
     })
       .then((res) => {
-        console.log(res);
         if (res.ok && !isLogin) {
           switchAuthModeHandler();
           setSignInMessage('Please login to continue');

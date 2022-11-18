@@ -19,13 +19,12 @@ import useMutation from '../../Hooks/useMutation';
 import {
   initialFieldValues,
   showOptionalFields,
-} from './CollectionFormsHelpers';
-import {
   TextFieldName,
   TextFieldTopic,
   TextFieldDescription,
-} from './CollectionFormMui/TextFieldame';
-import * as cls from './CollectionFormSX';
+} from './helpers/CollectionFormsHelpers';
+
+import * as cls from './styles/CollectionFormSX';
 
 const CollectionForm = () => {
   const validFileTypes = ['image/jpg', 'image/jpeg', 'image/png'];
@@ -38,7 +37,6 @@ const CollectionForm = () => {
   const [singInMessage, setSignInMessage] = useState(null);
   const [uploadFile, setFile] = useState(null);
   const [open, setOpen] = useState(false);
-
   const signInMessageHandler = (message) => {
     setOpen(true);
     setSignInMessage(message);
@@ -138,7 +136,7 @@ const CollectionForm = () => {
                 <TextFieldTopic
                   class={cls.formInputs}
                   value={values.topic}
-                  onChange={handleInputChange}
+                  handleChange={handleInputChange}
                 />
               </Box>
               <TextFieldDescription
@@ -207,7 +205,6 @@ const CollectionForm = () => {
                 </Button>
               </Box>
             </Box>
-
             <Box sx={cls.descriptionPreviewContainerBox}>
               {descriptionPreview && (
                 <Box sx={cls.descriptionPreviewBox}>
@@ -216,7 +213,6 @@ const CollectionForm = () => {
               )}
             </Box>
           </Box>
-
           {customizationPreview && (
             <Grid container spacing={4}>
               <Grid item md={4}>
@@ -233,7 +229,6 @@ const CollectionForm = () => {
                       >
                         {optionalFields.integer1 ? '-' : '+'}
                       </Button>
-
                       {optionalFields.integer1 && (
                         <TextField
                           onChange={handleInputChange}
@@ -272,7 +267,6 @@ const CollectionForm = () => {
                       >
                         {optionalFields.integer3 ? '-' : '+'}
                       </Button>
-
                       {optionalFields.integer3 && (
                         <TextField
                           sx={cls.singleOptionalInput}
@@ -301,7 +295,6 @@ const CollectionForm = () => {
                       >
                         {optionalFields.string1 ? '-' : '+'}
                       </Button>
-
                       {optionalFields.string1 && (
                         <TextField
                           onChange={handleInputChange}
@@ -313,7 +306,6 @@ const CollectionForm = () => {
                         />
                       )}
                     </Box>
-
                     <Box sx={cls.singleOptionalInputBox}>
                       <Button
                         sx={cls.toggleOptionalVisibilityButton}
@@ -322,7 +314,6 @@ const CollectionForm = () => {
                       >
                         {optionalFields.string2 ? '-' : '+'}
                       </Button>
-
                       {optionalFields.string2 && (
                         <TextField
                           sx={cls.singleOptionalInput}
@@ -370,7 +361,6 @@ const CollectionForm = () => {
                       >
                         {optionalFields.data1 ? '-' : '+'}
                       </Button>
-
                       {optionalFields.data1 && (
                         <TextField
                           onChange={handleInputChange}
@@ -390,7 +380,6 @@ const CollectionForm = () => {
                       >
                         {optionalFields.data2 ? '-' : '+'}
                       </Button>
-
                       {optionalFields.data2 && (
                         <TextField
                           sx={cls.singleOptionalInput}
@@ -410,7 +399,6 @@ const CollectionForm = () => {
                       >
                         {optionalFields.data3 ? '-' : '+'}
                       </Button>
-
                       {optionalFields.data3 && (
                         <TextField
                           sx={cls.singleOptionalInput}
@@ -458,7 +446,6 @@ const CollectionForm = () => {
                       >
                         {optionalFields.text2 ? '-' : '+'}
                       </Button>
-
                       {optionalFields.text2 && (
                         <TextField
                           sx={cls.singleOptionalInput}
@@ -478,7 +465,6 @@ const CollectionForm = () => {
                       >
                         {optionalFields.text3 ? '-' : '+'}
                       </Button>
-
                       {optionalFields.text3 && (
                         <TextField
                           sx={cls.singleOptionalInput}
@@ -493,7 +479,6 @@ const CollectionForm = () => {
                   </Box>
                 </Box>
               </Grid>
-
               <Grid item md={4}>
                 <Box
                   sx={{
@@ -513,7 +498,6 @@ const CollectionForm = () => {
                       >
                         {optionalFields.checkbox1 ? '-' : '+'}
                       </Button>
-
                       {optionalFields.checkbox1 && (
                         <TextField
                           onChange={handleInputChange}
@@ -525,7 +509,6 @@ const CollectionForm = () => {
                         />
                       )}
                     </Box>
-
                     <Box sx={cls.singleOptionalInputBox}>
                       <Button
                         sx={cls.toggleOptionalVisibilityButton}
@@ -534,7 +517,6 @@ const CollectionForm = () => {
                       >
                         {optionalFields.checkbox2 ? '-' : '+'}
                       </Button>
-
                       {optionalFields.checkbox2 && (
                         <TextField
                           sx={cls.singleOptionalInput}
@@ -555,7 +537,6 @@ const CollectionForm = () => {
                       >
                         {optionalFields.checkbox3 ? '-' : '+'}
                       </Button>
-
                       {optionalFields.checkbox3 && (
                         <TextField
                           sx={cls.formInputs}

@@ -7,7 +7,7 @@ import AreaHeaderText from '../../../muiComponents/AreaHeaderText';
 const NewItems = () => {
   const dataCtx = useContext(DataContext);
   const newItems = dataCtx.newItems;
-  
+
   return (
     <Grid item md={7}>
       <Box sx={{ marginTop: '75px' }}>
@@ -17,6 +17,7 @@ const NewItems = () => {
             return (
               <Grid item md={4} key={singleItem._id}>
                 <ItemCard
+                  _id={singleItem._id}
                   name={singleItem.name}
                   author={singleItem.author}
                   collection={singleItem.collectionName}

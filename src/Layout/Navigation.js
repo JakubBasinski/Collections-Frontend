@@ -65,6 +65,13 @@ const Navbar = () => {
             </NavLink>
 
             <NavLink
+              to={'/items'}
+              style={({ isActive }) => (isActive ? cls.activeLink : cls.link)}
+            >
+              Items
+            </NavLink>
+
+            <NavLink
               to={'/'}
               end
               style={({ isActive }) => (isActive ? cls.activeLink : cls.link)}
