@@ -1,36 +1,60 @@
-import React, { useState } from 'react';
-import { Button, Box, TextField, Typography } from '@mui/material';
-import * as classes from './styles/CommentSection';
+import React, { useState, useContext } from 'react';
+import { Button, Box, TextField } from '@mui/material';
+import * as classes from './styles/CommentSectionSx';
 import DoDisturbAltIcon from '@mui/icons-material/DoDisturbAlt';
+import usePostComment from '../../Hooks/usePostComment';
+import { useParams } from 'react-router-dom';
+import CommentContext from '../../store/comment-context';
 
 const CommentForm = ({
-  handleSubmit,
+  setActiveComment,
+  replyId,
   submitLabel,
   hasCancelButton = false,
   initialText = '',
   handleCancel,
+  editComment,
+  editingCommentId,
 }) => {
   const [text, setText] = useState(initialText);
   const isTextDisabled = text.length === 0;
+  const token = localStorage.getItem('token');
+  const { itemId } = useParams();
+  const { mutate: postCommentApi, serverMsg } = usePostComment();
+  const { setCount } = useContext(CommentContext);
   const onSubmit = (event) => {
+    let parentId;
+    if (replyId) {
+      parentId = replyId;
+    } else {
+      parentId = null;
+    }
     event.preventDefault();
-    handleSubmit(text);
+    const fd = new FormData();
+    fd.append('itemId', itemId);
+    fd.append('text', text);
+    fd.append('parentId', parentId);
+    if (submitLabel === 'Update') {
+      console.log('we are here');
+      fd.append('commentID', editingCommentId);
+      editComment(fd, token);
+    } else {
+      postCommentApi(fd, token);
+    }
+
+    setActiveComment(null);
+    setTimeout(() => {
+      setCount((p) => p + 1);
+    }, 1000);
     setText('');
   };
 
   return (
     <form onSubmit={onSubmit}>
-      <Box
-        sx={{
-          width: '90%',
-          gap: 2,
-          display: 'flex',
-          flexDirection: 'column',
-          marginTop: '15px',
-        }}
-      >
+      <Box>{serverMsg}</Box>
+      <Box sx={classes.form}>
         <TextField
-          label="Name"
+          label="Text"
           name="name"
           variant="filled"
           value={text}
@@ -38,6 +62,9 @@ const CommentForm = ({
           rows="4"
           sx={{
             width: '90%',
+            '& .MuiInputBase-input': {
+              color: 'primary.main',
+            },
           }}
           onChange={(e) => {
             setText(e.target.value);

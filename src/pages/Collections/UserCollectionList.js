@@ -1,54 +1,33 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core/';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import useDeleteCollection from '../../Hooks/useDeleteCollection';
 import CollectionCard from '../../components/Collection/CollectionCard';
-import {
-  Grid,
-  Typography,
-  Box,
-  Button,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogContentText,
-  DialogActions,
-} from '@mui/material';
+import { Grid, Typography, Box, Button } from '@mui/material';
 import useGetCollections from '../../Hooks/useGetCollections';
 import CollectionContext from '../../store/collection';
 import * as cls from './UserCollectionListSx';
-
-const useStyles = makeStyles({
-  media: {
-    width: '100%',
-    height: '55%',
-  },
-
-  actions: {
-    width: '100%',
-    height: '35%',
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'start',
-  },
-});
+import DialogComponent from '../../components/Dialog/DialogComponent';
 
 const UserCollectionList = () => {
   const collContext = useContext(CollectionContext);
   const navigate = useNavigate();
-  const classes = useStyles();
   const [openDialog, setOpen] = useState(false);
   const [count, setCount] = useState(0);
   const [bindCollectionId, setBindId] = useState('');
   const { mutate: getCollections, fetchedCollectionsState } =
     useGetCollections();
 
+  const deleteText = 'Delete the Collection ?';
+  const confirmationText =
+    'Are you sure you wand to delete collection? All data will be gone..';
+
   const { mutate: deleteCollection } = useDeleteCollection();
 
   useEffect(() => {
     getCollections();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [count]);
 
   const toDetailsPage = (id) => {
@@ -63,6 +42,23 @@ const UserCollectionList = () => {
         </Typography>
 
         <Grid container gap={5}>
+          {fetchedCollectionsState.length === 0 && (
+            <Typography
+              sx={{
+                height: '100px',
+                color: 'primary.main',
+                backgroundColor: ' #022b31',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                fontSize: '1.3rem',
+                borderRadius: '10px',
+                width: '50%',
+              }}
+            >
+              No collections found.
+            </Typography>
+          )}
           {fetchedCollectionsState.map((collectionObject) => {
             let collection = collectionObject.collection;
             let url = collectionObject.imageUrl;
@@ -108,66 +104,15 @@ const UserCollectionList = () => {
                   </Button>
                 </Box>
 
-                <Dialog
-                  open={openDialog}
-                  onClose={() => {
-                    setOpen(false);
-                  }}
-                  aria-labelledby="dialog-title"
-                  sx={{
-                    '& .MuiDialog-paper': {
-                      background: '#022b31',
-                      color: 'primary.main',
-                    },
-                    '& .MuiDialogContentText-root': { color: 'primary.main' },
-                    '& .MuiButtonBase-root': {
-                      color: 'primary.main',
-                      letterSpacing: 0.5,
-                      textTransform: 'none',
-                    },
-                    '& .MuiButtonBase-root:hover': {
-                      color: 'secondary.light',
-                      textShadow: '2px 2px 4px rgb(0,0,0)',
-                      transition: 'all 0.3s ease 0s',
-                      transform: 'translateY(-1px)',
-                      letterSpacing: 0.5,
-                      textTransform: 'none',
-                    },
-                  }}
-                >
-                  <DialogTitle id="dialog-title">
-                    Delete the Collection ?
-                  </DialogTitle>
-                  <DialogContent>
-                    <DialogContentText id="dialog-description">
-                      Are you sure you wand to delete collection? All data will
-                      be gone..
-                    </DialogContentText>
-                  </DialogContent>
-                  <DialogActions>
-                    <Button
-                      onClick={(e) => {
-                        setOpen(false);
-                        deleteCollection(bindCollectionId);
-                        setTimeout(() => {
-                          setCount((s) => s + 1);
-                        }, 2000);
-                      }}
-                      autoFocus
-                    >
-                      Confirm
-                    </Button>
-                    <Button
-                      onClick={() => {
-                        setOpen(false);
-                        return;
-                      }}
-                      autoFocus
-                    >
-                      Cancel
-                    </Button>
-                  </DialogActions>
-                </Dialog>
+                <DialogComponent
+                  openDialog={openDialog}
+                  setOpen={setOpen}
+                  deleteText={deleteText}
+                  confirmationText={confirmationText}
+                  deleteFunction={deleteCollection}
+                  _id={bindCollectionId}
+                  setCount={setCount}
+                />
               </Grid>
             );
           })}

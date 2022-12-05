@@ -10,6 +10,15 @@ export const listHeader = {
   marginBottom: '40px',
 };
 
+export const noCollectionText = {
+  paddingBottom: 1,
+  paddingLeft: 1.1,
+  color: 'primary.main',
+  letterSpacing: 2,
+  fontSize: 18,
+  width: '35%',
+  marginBottom: '40px',
+};
 // props
 
 export const card = {

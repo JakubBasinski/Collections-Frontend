@@ -19,6 +19,7 @@ const CollectionCard = (props) => {
       }}
       sx={props.card}
     >
+      
       <CardActionArea sx={props.cardActionImage}>
         {props.url ? (
           <CardMedia
@@ -34,7 +35,7 @@ const CollectionCard = (props) => {
           </Box>
         )}
       </CardActionArea>
-
+      
       <CardActionArea sx={props.cardActionDetails}>
         <CardContent sx={props.cardContent}>
           <Typography sx={cls.header} variant="h4">
@@ -47,7 +48,7 @@ const CollectionCard = (props) => {
             component="p"
             gutterBottom
           >
-           # {props.topic}
+            # {props.topic}
           </Typography>
 
           {props.description ? (
@@ -65,11 +66,11 @@ const CollectionCard = (props) => {
 
           {props.authorName ? (
             <Typography
-            sx={{ paddingLeft: '2px' }}
-            variant="body2"
-            component="p"
+              sx={{ paddingLeft: '2px' }}
+              variant="body2"
+              component="p"
             >
-               # {props.authorName}
+              # {props.authorName}
             </Typography>
           ) : null}
 

@@ -19,7 +19,6 @@ const useGetSingleCollection = () => {
         let url;
         let items;
         if (res.data) {
-          console.log(res.data);
           collection = res.data.collection;
           url = res.data.singleImageUrl;
           items = res.data.items;

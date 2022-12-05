@@ -18,10 +18,11 @@ import * as cls from './ItemFormSX';
 import { initialFieldValues } from './ItemFormHelper';
 
 const ItemForm = (props) => {
+  const dataCtx = useContext(DataContext);
+  const { theme } = dataCtx;
   const { collectionID } = useParams();
   const [open, setOpen] = useState(false);
   const [singInMessage, setSignInMessage] = useState(null);
-  const dataCtx = useContext(DataContext);
   const options = dataCtx.tags;
   const collection = props.collection;
   const date1 = collection.data1name;
@@ -225,6 +226,7 @@ const ItemForm = (props) => {
             setTags(null);
             props.setRefetch((p) => p + 1);
             props.setItemState((p) => !p);
+            dataCtx.setRefetch((p) => p + 1);
           }
         });
     } catch (err) {
@@ -250,7 +252,8 @@ const ItemForm = (props) => {
         <CreatableSelect
           isMulti
           placeholder={<div>Select Tags</div>}
-          styles={cls.customStyles}
+
+          styles={theme === 'light' ? cls.customStyles : cls.customStylesDark}
           options={options}
           name="tags"
           onChange={handleTags}

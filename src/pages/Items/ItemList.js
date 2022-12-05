@@ -30,6 +30,7 @@ const ItemList = () => {
       .catch((err) => {
         console.log(err);
       });
+      // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refetch]);
 
   let url = process.env.REACT_APP_URL;
@@ -98,7 +99,7 @@ const ItemList = () => {
               sx={{
                 color: '#DCD7C9',
                 fontSize: 18,
-              
+
                 // alignItems: 'start',
                 '&:hover': {
                   color: 'secondary.dark',

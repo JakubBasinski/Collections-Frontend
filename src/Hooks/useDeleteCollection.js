@@ -10,7 +10,6 @@ const useDeleteCollection = () => {
   const fn = async (id) => {
     let url = process.env.REACT_APP_URL;
     const token = localStorage.getItem('token');
-    console.log(token);
     setState((prevState) => ({
       ...prevState,
       isLoading: true,

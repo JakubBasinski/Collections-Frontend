@@ -1,7 +1,9 @@
-import React from 'react';
-import * as classes from './styles/CommentSection.js';
+import React, { useContext } from 'react';
+import * as classes from './styles/CommentSectionSx.js';
 import { Box, Typography, Divider } from '@mui/material';
 import CommentForm from './CommentForm.js';
+import { useParams } from 'react-router-dom';
+import DataContext from '../../store/data-context.js';
 
 const Comment = ({
   comment,
@@ -11,41 +13,48 @@ const Comment = ({
   activeComment,
   setActiveComment,
   parentId = null,
-  addComment,
-  updateComment
+  editComment,
 }) => {
   const fiveMinutes = 300000;
   const timePassed = new Date() - new Date(comment.createdAt) > fiveMinutes;
-  console.log(timePassed);
   const canReply = Boolean(currentUserId);
-  const canEdit = currentUserId === comment.userId && !timePassed;
-  const cadDelete = currentUserId === comment.userId && !timePassed;
+  const canEdit = currentUserId === comment.authorId && !timePassed;
+  const cadDelete = currentUserId === comment.authorId && !timePassed;
   const createdAt = new Date(comment.createdAt).toLocaleDateString('en-GB', {
     month: '2-digit',
     day: '2-digit',
     year: 'numeric',
   });
+  const token = localStorage.getItem('token');
+  const { itemId } = useParams();
 
   const isReplying =
     activeComment &&
     activeComment.type === 'replying' &&
-    activeComment.id === comment.id;
+    activeComment._id === comment._id;
 
   const isEditing =
     activeComment &&
     activeComment.type === 'editing' &&
-    activeComment.id === comment.id;
+    activeComment._id === comment._id;
 
-  const replyId = parentId ? parentId : comment.id;
+  const replyId = parentId ? parentId : comment._id;
+
+  const dataCtx = useContext(DataContext);
+  const { theme } = dataCtx;
 
   return (
-    <Box sx={classes.comment}>
+    <Box sx={theme === 'light' ? classes.comment : classes.commentsDark}>
       <Box sx={classes.commentContent}>
         <Box sx={classes.commentRightPart}>
-          <Box sx={classes.commentAuthor}>{comment.username}</Box>
+          <Box sx={classes.commentAuthor}>{comment.author}</Box>
           <Box sx={classes.createdAt}>{createdAt}</Box>
 
-          <Box sx={classes.commentText}>
+          <Box
+            sx={
+              theme === 'light' ? classes.commentText : classes.commentTextDark
+            }
+          >
             {!isEditing && (
               <Typography
                 //   noWrap
@@ -67,18 +76,20 @@ const Comment = ({
                 submitLabel="Update"
                 hasCancelButton
                 initialText={comment.body}
-                handleSubmit={(text) => updateComment(text, comment.id)}
+                editingCommentId={comment._id}
+                editComment={editComment}
                 handleCancel={() => setActiveComment(null)}
+                setActiveComment={setActiveComment}
               />
             )}
             <Divider sx={{ marginTop: '20px' }} />
-            
+
             <Box sx={classes.commentActions}>
               {canReply && (
                 <Box
                   sx={classes.commentAction}
                   onClick={() =>
-                    setActiveComment({ id: comment.id, type: 'replying' })
+                    setActiveComment({ _id: comment._id, type: 'replying' })
                   }
                 >
                   Reply
@@ -88,7 +99,7 @@ const Comment = ({
                 <Box
                   sx={classes.commentAction}
                   onClick={() => {
-                    setActiveComment({ id: comment.id, type: 'editing' });
+                    setActiveComment({ _id: comment._id, type: 'editing' });
                   }}
                 >
                   Edit
@@ -98,7 +109,7 @@ const Comment = ({
                 <Box
                   sx={classes.commentAction}
                   onClick={() => {
-                    deleteComment(comment.id);
+                    deleteComment({ commentId: comment._id, itemId }, token);
                   }}
                 >
                   Delete
@@ -109,7 +120,8 @@ const Comment = ({
               {isReplying && (
                 <CommentForm
                   submitLabel="Reply"
-                  handleSubmit={(text) => addComment(text, replyId)}
+                  replyId={replyId}
+                  setActiveComment={setActiveComment}
                 />
               )}
             </Box>
@@ -120,13 +132,12 @@ const Comment = ({
               {replies.map((reply) => (
                 <Comment
                   comment={reply}
-                  key={reply.id}
+                  key={reply._id}
                   replies={[]}
                   currentUserId={currentUserId}
-                  parentId={comment.id}
+                  parentId={comment._id}
                   deleteComment={deleteComment}
-                  updateComment={updateComment}
-                  addComment={addComment}
+                  editComment={editComment}
                   activeComment={activeComment}
                   setActiveComment={setActiveComment}
                 />

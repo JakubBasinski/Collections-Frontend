@@ -1,4 +1,55 @@
-.App {
+* {
+  box-sizing: border-box;
+}
+
+body,
+html {
+  font-family: 'Quicksand', sans-serif;
+  width: 100vw;
+  height: 100vh;
+  overflow: auto;
+  margin: 0;
+  padding: 0;
+  color: white;
+  letter-spacing: 2px;
+  list-style-type: none;
+  text-decoration: none;
+}
+
+html,
+body,
+#app,
+#app > div {
+  height: 100%;
+}
+
+#light {
+  width: 100vw;
+  height: 100vh;
+  background: radial-gradient(circle, #033c41 0%, #2a3b41 100%);
+  overflow: auto;
+  margin: 0;
+  padding: 0;
+  color: white;
+  letter-spacing: 2px;
+  list-style-type: none;
+  text-decoration: none;
+}
+
+#dark {
+  width: 100vw;
+  height: 100vh;
+  background: radial-gradient(circle, black 0%, #2a3b41 100%);
+  overflow: auto;
+  margin: 0;
+  padding: 0;
+  color: white;
+  letter-spacing: 2px;
+  list-style-type: none;
+  text-decoration: none;
+}
+
+/* .App {
   text-align: center;
 }
 
@@ -35,4 +86,4 @@
   to {
     transform: rotate(360deg);
   }
-}
+} */

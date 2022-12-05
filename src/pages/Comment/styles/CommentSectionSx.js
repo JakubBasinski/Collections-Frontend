@@ -7,6 +7,16 @@ export const comments = {
     '0px 7px 8px -4px rgb(0 0 0 / 20%), 0px 12px 17px 2px rgb(0 0 0 / 14%), 0px 5px 22px 4px rgb(0 0 0 / 12%)',
 };
 
+export const commentsDark = {
+  background: 'none',
+  backdropFilter: 'invert(10%)',
+  color: 'primary.main',
+  padding: '30px',
+  borderRadius: '4px',
+  boxShadow:
+    '0px 7px 8px -4px rgb(0 0 0 / 20%), 0px 12px 17px 2px rgb(0 0 0 / 14%), 0px 5px 22px 4px rgb(0 0 0 / 12%)',
+};
+
 export const commentsTitle = {
   fontSize: '30px',
   marginBottom: '20px',
@@ -46,34 +56,18 @@ export const commentFormButton = {
     transform: 'translateY(-1px)',
   },
   '&.Mui-disabled': {
-    color:'#55a693'
-  }
+    color: '#55a693',
+  },
 };
 
 export const commentFormButtonCancel = {
   ...commentFormButton,
 };
 
-// .comment-form-button:hover:enabled {
-//   cursor: pointer ;
-//   background: rgb(37, 99, 235) ;
-// }
-
-// .comment-form-button:disabled {
-//   opacity: 0.7 ;
-//   cursor: default ;
-// }
-
-// .comment-form-cancel-button {
-//   margin-left: 10px ;
-// }
-
 export const comment = {
   display: 'flex',
   marginBottom: '28px',
   width: '100%',
-  // border: 1,
-  // borderClor:'primary.dark',
   padding: '15px',
   borderRadius: '8px',
   backgroundColor: 'success.main',
@@ -95,7 +89,6 @@ export const commentContent = {
   width: '100%',
   display: 'flex',
   color: 'primary.main',
-  // flexDirection: 'column',
 };
 
 export const commentAuthor = {
@@ -120,6 +113,12 @@ export const commentText = {
   backgroundColor: 'info.main',
 };
 
+export const commentTextDark = {
+  ...commentText,
+  backgroundColor: 'none',
+
+};
+
 export const commentActions = {
   display: 'flex',
   width: '100%',
@@ -133,10 +132,8 @@ export const commentActions = {
 export const commentAction = {
   display: 'flex',
   fontSize: '13px',
-  // border:1,
   borderRadius: '2px',
   borderLeft: 1,
-  // borderBottom:1,
   borderColor: 'info.light',
   marginTop: '8px',
   padding: '1px 6px',
@@ -150,12 +147,16 @@ export const commentAction = {
   },
 };
 
-// .comment-action:hover {
-//   text-decoration: underline ;
-// }
-
 export const replies = {
   marginY: '20px',
-  marginLeft:'15px',
+  marginLeft: '15px',
+};
+
+export const form = {
+  width: '90%',
+  gap: 2,
+  display: 'flex',
+  flexDirection: 'column',
+  marginTop: '15px',
 
 };

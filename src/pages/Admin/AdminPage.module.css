@@ -2,6 +2,10 @@
   background-color: #25726c;
 }
 
+.tableRowDark:hover {
+  background-color: rgba(94, 94, 94, 0.336);
+}
+
 .icons {
   padding: 3px;
   border-radius: 50%;

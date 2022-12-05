@@ -1,23 +1,26 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useContext } from 'react';
 import CollectionCard from '../../components/Collection/CollectionCard';
 import { Grid, Typography } from '@mui/material';
 import { useParams } from 'react-router-dom';
 import * as cls from './styles/SingleCollectionSX';
 import useGetSingleCollection from '../../Hooks/useGetSingleCollection';
 import PaginatedItemList from '../Items/PaginatedItems';
+import DataContext from '../../store/data-context';
 
 const SingleCollection = () => {
   const { collectionId } = useParams();
   const {
     mutate: getCollection,
-    isLoading,
     fetchedCollection,
     fetchedUrl,
     fetchedItems,
   } = useGetSingleCollection();
 
+  const { theme } = useContext(DataContext);
+
   useEffect(() => {
     getCollection(collectionId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   let additionalInformations = [
@@ -49,6 +52,7 @@ const SingleCollection = () => {
                 height: '70%',
               },
             }}
+            onClick={(e) => {}}
             card={cls.card}
             cardActionImage={cls.cardActionImage}
             cardContent={cls.cardContent}
@@ -65,16 +69,32 @@ const SingleCollection = () => {
             <PaginatedItemList fetchedData={fetchedItems} />
           ) : (
             <Typography
-              sx={{
-                height: '300px',
-                color: 'primary.main',
-                backgroundColor: ' #022b31',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                fontSize: '1.2rem',
-                borderRadius:"10px"
-              }}
+              sx={
+                theme === 'light'
+                  ? {
+                      height: '300px',
+                      color: 'primary.main',
+                      backgroundColor: ' #022b31',
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      fontSize: '1.2rem',
+                      borderRadius: '10px',
+                      border: 1,
+                    }
+                  : {
+                      background: 'none',
+                      backdropFilter: 'invert(10%)',
+                      height: '300px',
+                      color: 'primary.main',
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      fontSize: '1.2rem',
+                      borderRadius: '10px',
+                      border: 1,
+                    }
+              }
             >
               No Items found.
             </Typography>

@@ -1,12 +1,13 @@
 import * as React from 'react';
 import Navbar from './Navigation';
+import { Box } from '@mui/material';
 
 const Layout = (props) => {
   return (
-    <React.Fragment >
+    <Box sx={{height: '100%' }}>
       <Navbar />
-     {props.children}
-    </React.Fragment>
+      {props.children}
+    </Box>
   );
 };
 

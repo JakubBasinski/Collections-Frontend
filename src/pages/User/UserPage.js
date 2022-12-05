@@ -8,7 +8,7 @@ import CollectionDetails from '../Collections/CollectionDetails';
 
 const UserPage = () => {
   return (
-    <Grid container sx={{ height: '90vh' }} gap={8} justifyContent="start">
+    <Grid container sx={{ height: '100%'}} gap={8} justifyContent="start">
       <UserMenu />
       <Routes>
         <Route path="add" element={<CollectionForm />} />

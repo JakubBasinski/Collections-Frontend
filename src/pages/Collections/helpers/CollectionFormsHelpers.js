@@ -1,5 +1,17 @@
 import { TextField, MenuItem } from '@mui/material';
 
+const sxSelected = {
+  '&:hover': { backgroundColor: 'info.main' },
+  '&.Mui-selected': { backgroundColor: 'info.main', color: 'secondary.main' },
+  '&.Mui-selected:hover': {
+    backgroundColor: 'info.main',
+    color: 'secondary.main',
+  },
+
+  color: 'primary.main',
+  backgroundColor: 'info.light',
+};
+
 export const initialFieldValues = {
   name: '',
   topic: '',
@@ -67,13 +79,27 @@ export const TextFieldTopic = (props) => {
       select
       required
     >
-      <MenuItem value="Alcohols">Alcohols</MenuItem>
-      <MenuItem value="Books">Books</MenuItem>
-      <MenuItem value="Films">Films</MenuItem>
-      <MenuItem value="Cars">Cars</MenuItem>
-      <MenuItem value="Board Games">BoardGames</MenuItem>
-      <MenuItem value="Animals">Animals</MenuItem>
-      <MenuItem value="Nature">Nature</MenuItem>
+      <MenuItem sx={sxSelected} value="Alcohols">
+        Alcohols
+      </MenuItem>
+      <MenuItem sx={sxSelected} value="Books">
+        Books
+      </MenuItem>
+      <MenuItem sx={sxSelected} value="Films">
+        Films
+      </MenuItem>
+      <MenuItem sx={sxSelected} value="Cars">
+        Cars
+      </MenuItem>
+      <MenuItem sx={sxSelected} value="Board Games">
+        BoardGames
+      </MenuItem>
+      <MenuItem sx={sxSelected} value="Animals">
+        Animals
+      </MenuItem>
+      <MenuItem sx={sxSelected} value="Nature">
+        Nature
+      </MenuItem>
     </TextField>
   );
 };

@@ -8,6 +8,7 @@ import { AuthorizationContextProvider } from './store/authorization-context';
 import { CollectionContextProvider } from './store/collection';
 import { DataContextProvider } from './store/data-context';
 import { StylesProvider } from '@material-ui/core/styles';
+import { CommentContextProvider } from './store/comment-context';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -15,9 +16,11 @@ root.render(
     <AuthorizationContextProvider>
       <CollectionContextProvider>
         <DataContextProvider>
-          <BrowserRouter>
-            <App />
-          </BrowserRouter>
+          <CommentContextProvider>
+            <BrowserRouter>
+              <App />
+            </BrowserRouter>
+          </CommentContextProvider>
         </DataContextProvider>
       </CollectionContextProvider>
     </AuthorizationContextProvider>

@@ -14,7 +14,6 @@ const LargestCollections = () => {
 
   return (
     <React.Fragment>
-    
       <Grid item md={2} sx={cls.mainGrid}>
         <Box sx={cls.listBox}>
           <Typography sx={cls.listHeader}>Largest collections</Typography>

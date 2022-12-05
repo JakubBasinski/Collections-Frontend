@@ -134,7 +134,7 @@ const CollectionForm = () => {
                   handleChange={handleInputChange}
                 />
                 <TextFieldTopic
-                  class={cls.formInputs}
+                  class={cls.formTopic}
                   value={values.topic}
                   handleChange={handleInputChange}
                 />

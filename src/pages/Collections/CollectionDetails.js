@@ -22,9 +22,10 @@ const CollectionDetails = () => {
   } = useGetCollectionDetails();
 
   useEffect(
-    (additionalInformations) => {
+    () => {
       getCollection();
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [refetch]
   );
 
@@ -43,6 +44,7 @@ const CollectionDetails = () => {
         <Grid container gap={5}>
           <Grid item md={4}>
             <CollectionCard
+              onClick={(e) => {}}
               card={cls.card}
               cardActionImage={cls.cardActionImage}
               cardContent={cls.cardContent}

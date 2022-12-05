@@ -32,7 +32,6 @@ const useGetCollectionDetails = () => {
           error: '',
           fetchedCollection: collection,
           fetchedUrl: url,
-          
         });
       })
       .catch((error) => setState({ isLoading: false, error }));

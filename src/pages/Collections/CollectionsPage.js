@@ -1,15 +1,5 @@
-import React, { useEffect, useContext } from 'react';
-import { CardActionArea, makeStyles } from '@material-ui/core/';
-import ReactMarkdown from 'react-markdown';
-import ImageNotSupportedIcon from '@mui/icons-material/ImageNotSupported';
-import {
-  Grid,
-  Typography,
-  Box,
-  Card,
-  CardContent,
-  CardMedia,
-} from '@mui/material';
+import React, { useContext } from 'react';
+import { Grid, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import DataContext from '../../store/data-context';
 import CollectionCard from '../../components/Collection/CollectionCard';
@@ -24,7 +14,11 @@ const Collections = () => {
   };
 
   return (
-    <Grid container sx={{ marginTop: '75px' }} justifyContent="center">
+    <Grid
+      container
+      sx={{ height: '100vh', marginTop: '75px' }}
+      justifyContent="center"
+    >
       <Grid item md={8}>
         <Grid container spacing={5} sx={{}}>
           {collections ? (
@@ -32,6 +26,7 @@ const Collections = () => {
               return (
                 <Grid key={object.collection._id} item md={3}>
                   <CollectionCard
+                    isLoading={dataCtx.isLoading}
                     card={cls.card}
                     name={object.collection.name}
                     topic={object.collection.topic}

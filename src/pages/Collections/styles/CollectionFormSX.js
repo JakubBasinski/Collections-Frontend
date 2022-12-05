@@ -56,6 +56,13 @@ const inputStyling = {
 };
 
 export const formInputs = {
+  color: 'red',
+  width: '50%',
+  ...inputStyling,
+};
+
+export const formTopic = {
+  color: 'red',
   width: '50%',
   ...inputStyling,
 };
@@ -67,7 +74,7 @@ export const formDescription = {
 
 export const singleOptionalInput = {
   width: '50%',
-  color:'primary.main',
+  color: 'primary.main',
   '& .MuiOutlinedInput-input': {
     color: 'primary.main',
     fontSize: '1.1em',

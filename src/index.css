@@ -1,22 +1,14 @@
-* {
-  box-sizing: border-box;
-}
-
-body {
+html,body {
   font-family: 'Quicksand', sans-serif;
-  /* background: #033c41; */
-  background: radial-gradient(
-    circle,
-    #033c41 0%,
-    #2a3b41 100%
-  );
-  overflow: auto;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
   margin: 0;
   padding: 0;
   color: white;
   letter-spacing: 2px;
   list-style-type: none;
   text-decoration: none;
-  margin-bottom: 10rem;
-
+  overflow-x: hidden;
 }
+

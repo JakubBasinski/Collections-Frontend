@@ -1,15 +1,25 @@
-import * as React from 'react';
+import { useContext } from 'react';
 import Card from '@mui/material/Card';
-import { CardContent, Typography } from '@mui/material';
+import { CardContent, Typography, Badge } from '@mui/material';
 import { Box } from '@mui/system';
+import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import { useNavigate } from 'react-router-dom';
+import useLikeItem from '../../Hooks/useLikeItem';
+import AuthorizationContext from '../../store/authorization-context';
+import DataContext from '../../store/data-context';
 
 const ItemCard = (props) => {
   const navigate = useNavigate();
   const gotoItemPage = (path) => {
     navigate(`/items/${path}`);
   };
+
+  const { mutate: likeHandlerApi } = useLikeItem();
+  const token = localStorage.getItem('token');
+  const { isLoggedIn } = useContext(AuthorizationContext);
+  const dataCtx = useContext(DataContext);
+  const { theme } = dataCtx;
 
   return (
     <Card
@@ -27,6 +37,8 @@ const ItemCard = (props) => {
             fontWeight: '800',
             borderBottom: 1,
             borderColor: 'rgba(255, 255, 255, 0.2)',
+            paddingBottom: '2px',
+            width: '90%',
           }}
         >
           {props.name}
@@ -72,49 +84,121 @@ const ItemCard = (props) => {
         >
           {props.collection}
         </Typography>
-        {/* <Divider sx={{ marginBottom: '20px' }} /> */}
-        <Box
-          sx={{
-            padding: 0,
-            margin: 0,
-            width: '100%',
-            justifyContent: 'end',
-            display: 'flex',
-          }}
-        >
+
+        {isLoggedIn && (
           <Box
             sx={{
-              width: '15%',
-              borderRadius: '5px',
-              border: 'solid 1px secondar.dark',
-              background: '#1A373C',
+              padding: 0,
+              margin: 0,
+              width: '100%',
+              justifyContent: 'end',
               display: 'flex',
-              justifyContent: 'center',
-              letterSpacing: 1,
-              paddingX: '10px',
-              paddingY: '5px',
-              textTransform: 'none',
-              fontSize: '1em',
-              '&:hover': {
-                color: '#A2CDCB',
-                background: '#1A373C',
-                boxShadow: 5,
-                transition: 'all 0.3s ease 0s',
-                transform: 'translateY(-1px)',
-              },
             }}
           >
-            <FavoriteBorderIcon
-              sx={{
-                color: '#55a693',
-                '&:hover': {
-                  color: '#A2CDCB',
-                },
+            <Box
+              onClick={(e) => {
+                e.stopPropagation();
+                likeHandlerApi(props.itemId, token).then(props.refetch());
               }}
-            />
-            {/* <Typography>(1)</Typography> */}
+              sx={
+                theme === 'light'
+                  ? {
+                      width: '25px',
+                      borderRadius: '8px',
+                      border: 'solid 1px secondar.dark',
+                      background: '#1A373C',
+                      display: 'flex',
+                      justifyContent: 'center',
+                      letterSpacing: 1,
+                      paddingX: '25px',
+                      paddingY: '10px',
+                      textTransform: 'none',
+                      fontSize: '1em',
+                      '&:hover': {
+                        color: '#A2CDCB',
+                        background: '#1A373C',
+                        boxShadow: 5,
+                        transition: 'all 0.3s ease 0s',
+                        transform: 'translateY(-1px)',
+                      },
+                    }
+                  : {
+                      width: '25px',
+                      borderRadius: '8px',
+                      border: 'solid 1px secondar.dark',
+                      background: '#413F42',
+                      display: 'flex',
+                      justifyContent: 'center',
+                      letterSpacing: 1,
+                      paddingX: '25px',
+                      paddingY: '10px',
+                      textTransform: 'none',
+                      fontSize: '1em',
+                      '&:hover': {
+                        color: '#A2CDCB',
+                        background: '#302E31',
+                        boxShadow: 5,
+                        transition: 'all 0.3s ease 0s',
+                        transform: 'translateY(-1px)',
+                      },
+                    }
+              }
+            >
+              <Badge
+                sx={
+                  theme === 'light'
+                    ? {
+                        '& .MuiBadge-badge': {
+                          color: '#55a693',
+                          fontSize: '1rem',
+                        },
+                      }
+                    : {
+                        '& .MuiBadge-badge': {
+                          color: '#55a693',
+                          fontSize: '1rem',
+                        },
+                      }
+                }
+                badgeContent={props.likes}
+              >
+                {props.isLiked && (
+                  <FavoriteIcon
+                    sx={
+                      theme === 'light'
+                        ? {
+                            color: '#55a693',
+                            '&:hover': {
+                              color: '#A2CDCB',
+                              cursor: 'pointer',
+                            },
+                          }
+                        : {
+                            color: '#55a693',
+                            '&:hover': {
+                              color: '#A2CDCB',
+                              cursor: 'pointer',
+                            },
+                          }
+                    }
+                  />
+                )}
+
+                {!props.isLiked && (
+                  <FavoriteBorderIcon
+                    sx={{
+                      color: '#55a693',
+                      '&:hover': {
+                        color: '#A2CDCB',
+                        cursor: 'pointer',
+                      },
+                    }}
+                  />
+                )}
+              </Badge>
+            </Box>
           </Box>
-        </Box>
+        )}
       </CardContent>
     </Card>
   );

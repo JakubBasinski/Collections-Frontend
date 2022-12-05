@@ -1,24 +1,23 @@
 import React, { useContext } from 'react';
 import AuthorizationContext from '../store/authorization-context';
-import {
-  AppBar,
-  Typography,
-  Toolbar,
-  IconButton,
-  Stack,
-  Button,
-} from '@mui/material';
-import { Link, NavLink } from 'react-router-dom';
+import { AppBar, Typography, Toolbar, Stack } from '@mui/material';
+import { NavLink } from 'react-router-dom';
 import CatchingPokemonIcon from '@mui/icons-material/CatchingPokemon';
 import * as cls from './NavigationSx';
+import NightsStayIcon from '@mui/icons-material/NightsStay';
+import LightModeIcon from '@mui/icons-material/LightMode';
+import DataContext from '../store/data-context';
 
 const Navbar = () => {
+  const dataCtx = useContext(DataContext);
   const authCtx = useContext(AuthorizationContext);
   const isLoggedIn = authCtx.isLoggedIn;
+  const isAdmin = authCtx.isAdmin;
   const userId = localStorage.getItem('userId');
   const logoutHandler = () => {
     authCtx.logout();
   };
+  const { theme, setThemeController } = dataCtx;
 
   return (
     <React.Fragment>
@@ -38,8 +37,44 @@ const Navbar = () => {
             Collections
           </Typography>
 
-          <Stack direction="row" spacing={5} alignItems="center">
-            {isLoggedIn && (
+          <Stack direction="row" spacing={3} alignItems="center">
+            {theme === 'light' ? (
+              <NightsStayIcon
+                onClick={() => {
+                  setThemeController('dark');
+                }}
+                sx={{
+                  color: '#c9c9c9',
+                  padding: 0,
+                  fontSize: 30,
+                  '&:hover': {
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease 0s',
+                    transform: 'translateY(-1px)',
+                    transformOrigin: 'bottom left ',
+                  },
+                }}
+              />
+            ) : (
+              <LightModeIcon
+                onClick={() => {
+                  setThemeController('light');
+                }}
+                sx={{
+                  color: '#DAB220',
+                  padding: 0,
+                  fontSize: 30,
+                  '&:hover': {
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease 0s',
+                    transform: 'translateY(-1px)',
+                    transformOrigin: 'bottom left ',
+                  },
+                }}
+              />
+            )}
+
+            {isAdmin && (
               <NavLink
                 to="/panel"
                 style={({ isActive }) => (isActive ? cls.activeLink : cls.link)}

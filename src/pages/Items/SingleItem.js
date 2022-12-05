@@ -1,21 +1,35 @@
-import { useEffect } from 'react';
+import { useEffect, useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import { Grid } from '@mui/material';
 import useGetSingleItem from '../../Hooks/useGetSingleItem';
 import ItemCard from '../../components/Item/ItemCard';
-import * as cls from './styles/SingleItemSX';
-import CommentList from './CommenList';
-
+import CommentList from '../Comment/CommenList';
+import CommentContext from '../../store/comment-context';
+import { card } from './styles/SingleItemSX';
 
 const SingleItem = () => {
   const { itemId } = useParams();
-  const { mutate: getSingleItem, fetchedItem } = useGetSingleItem();
+  const {
+    mutate: getSingleItem,
+    fetchedItem,
+    comments,
+    likes,
+    isLiked,
+  } = useGetSingleItem();
+
   const userId = localStorage.getItem('userId');
-  console.log('userId', userId);
+
+  const { count, setCount } = useContext(CommentContext);
+  const setCountHandler = () => {
+    setTimeout(() => {
+      setCount((p) => p + 1);
+    }, 250);
+  };
 
   useEffect(() => {
     getSingleItem(itemId);
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [count]);
 
   return (
     <Grid container sx={{ height: '100vh' }}>
@@ -32,14 +46,20 @@ const SingleItem = () => {
       >
         <Grid item md={3} sx={{ height: '100%' }}>
           <ItemCard
-            cardClass={cls.card}
+
+            cardClass={card}
             name={fetchedItem.name}
             collection={fetchedItem.collectionName}
             author={fetchedItem.author}
+            itemId={fetchedItem._id}
+            _id={fetchedItem._id}
+            refetch={setCountHandler}
+            likes={likes}
+            isLiked={isLiked}
           />
         </Grid>
-        <Grid item md={6} sx={{  height: '100%' }}>
-          <CommentList currentUserId={userId} />
+        <Grid item md={6} sx={{ height: '100%' }}>
+          <CommentList currentUserId={userId} comments={comments} />
         </Grid>
       </Grid>
     </Grid>

@@ -112,7 +112,7 @@ export const dateInputText = {
   //   borderBottomColor: 'yellow',
   // },
   '& .MuiOutlinedInput-root': {
-    color:'#8db5b3',
+    color: '#8db5b3',
     '& fieldset': {
       borderColor: '#7ca4a2',
     },
@@ -151,7 +151,6 @@ export const datePopperProps = {
   },
 };
 
-
 export const checkBoxStyle = {
   '&.MuiCheckbox-root': {
     color: '#7ca4a2',
@@ -174,5 +173,85 @@ export const formControlLabel = {
     fontSize: '1.3rem',
     color: '#7ca4a2',
     marginLeft: '5px',
+  },
+};
+
+export const customStylesDark = {
+  control: (styles, { data, isDisabled, isFocused, isSelected }) => ({
+    ...styles,
+    height: '140%',
+    width: '100%',
+    margin: 'auto',
+    backgroundColor: 'none',
+    border: isFocused ? 0 : 0,
+    boxShadow: isFocused ? 0 : 0,
+  }),
+  option: (provided, { data, isDisabled, isFocused, isSelected }) => ({
+    ...provided,
+    borderBottom: '1px dotted #2a3b41',
+    backgroundColor: '#262b2d',
+    color: '#DCD7C9',
+    padding: 20,
+    marign: 0,
+    ':hover': {
+      backgroundColor: '#151a1c',
+    },
+  }),
+  multiValue: (styles, { data }) => {
+    const color = 'white';
+    return {
+      ...styles,
+      color: color,
+      backgroundColor: '#262b2d',
+    };
+  },
+  multiValueLabel: (styles, { data }) => ({
+    ...styles,
+    color: '#DCD7C9',
+  }),
+  container: (styles, { data }) => ({
+    ...styles,
+    zIndex: '100 !important',
+  }),
+  multiValueRemove: (styles, { data }) => ({
+    ...styles,
+    color: '#DCD7C9',
+    backgroundColor: '#262b2d',
+    ':hover': {
+      backgroundColor: '#151a1c',
+      color: '#f8e112',
+      cursor: 'pointer',
+    },
+  }),
+  placeholder: (defaultStyles) => {
+    return {
+      ...defaultStyles,
+      color: '#8db5b3',
+    };
+  },
+  input: (defaultStyles) => {
+    return {
+      ...defaultStyles,
+      color: '#DCD7C9',
+    };
+  },
+  menuList: (defaultStyles) => {
+    return {
+      ...defaultStyles,
+      margin: 0,
+      padding: 0,
+    };
+  },
+  indicatorSeparator: (defaultStyles) => {
+    return {
+      display: 'none',
+    };
+  },
+  noOptionsMessage: (defaultStyles) => {
+    return {
+      ...defaultStyles,
+      color: '#DCD7C9',
+      backgroundColor: '#262b2d',
+    };
   },
 };

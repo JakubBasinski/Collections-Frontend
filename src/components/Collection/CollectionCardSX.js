@@ -15,6 +15,7 @@ export const noImageBox = {
 };
 
 export const cardMediaBox = {
+  minHeight: '300px',
   maxHeight: '300px',
   objectFit: 'cover',
   width: '100%',
@@ -36,7 +37,6 @@ export const additionalInfo = {
 export const header = {
   padding: 0,
   margin: 0,
-  color: '#A2CDCB',
   color: '#55a693',
   fontFamily: 'Source Sans Pro',
   textShadow: '1px 1px 1px rgb(0,0,0)',

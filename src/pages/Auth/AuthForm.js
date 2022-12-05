@@ -18,7 +18,7 @@ const AuthForm = () => {
   const [singInMessage, setSignInMessage] = useState(null);
   const authCtx = useContext(AuthorizationContext);
   const navigate = useNavigate();
-  
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setValues({
@@ -101,6 +101,7 @@ const AuthForm = () => {
     } else {
       url = `${url}/signup`;
     }
+
     fetch(url, {
       method: 'POST',
       body: JSON.stringify({
@@ -123,9 +124,13 @@ const AuthForm = () => {
           setSignInMessage(data.message);
         }
         if (data.token) {
+          const expirationTime = new Date(
+            new Date().getTime() + data.expiresIn
+          );
           const token = data.token;
           const userId = data.userId;
-          authCtx.login(token, userId);
+          const isAdmin = data.isAdmin;
+          authCtx.login(token, userId, expirationTime.toISOString(), isAdmin);
           navigate(`/profile/${userId}/list`);
         }
       })
@@ -135,7 +140,7 @@ const AuthForm = () => {
   };
 
   return (
-    <Grid container justifyContent="center" marginTop="100px">
+    <Grid container sx ={{ marginTop:"100px",  height: '100vh'}} justifyContent="center" >
       <Grid item md={3} justifyContent="center">
         <form onSubmit={submitHandler}>
           <FormControl sx={cls.FormControlSx}>
